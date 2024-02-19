@@ -1,0 +1,48 @@
+.container {
+  background-color: #222;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+input[type="text"],
+select,
+input[type="checkbox"],
+button {
+  margin: 5px;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  background-color: #444;
+  color: white;
+}
+
+button {
+  cursor: pointer;
+  background-color: #007bff;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+label {
+  margin-right: 10px;
+}
+
+#variant_id_label,
+#binary_values_label {
+  margin-top: 10px;
+}
+
+#footer {
+  font-size: 12px;
+  margin-top: 20px;
+  color: #888;
+}
+
+#header {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
