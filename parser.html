@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Variant ID Parser!!!</title>
+  <title>Variant ID Parser</title>
   <style>
     body {
       background-color: #333;
@@ -97,10 +97,13 @@
     function parseVariantID() {
       var variantId = document.getElementById("variant_id_input").value;
       
-      // Split the variant ID into 4 parts: year code, bools, 0000, and DecoID
-      var yearCode = parseInt(variantId.substring(0, 4), 2);
-      var bools = variantId.substring(4, 8);
-      var decoId = parseInt(variantId.substring(12), 2);
+      // Convert the variant ID to binary and ensure it's 16 digits
+      var binaryVariantId = parseInt(variantId, 10).toString(2).padStart(16, '0');
+      
+      // Split the binary variant ID into 4 parts: year code, bools, 0000, and DecoID
+      var yearCode = parseInt(binaryVariantId.substring(0, 4), 2);
+      var bools = binaryVariantId.substring(4, 8);
+      var decoId = parseInt(binaryVariantId.substring(12), 2);
       
       // Convert bools to individual boolean values
       var repose = bools[0] === "1" ? "Yes" : "No";
@@ -111,7 +114,7 @@
       // Display parsed values
       document.getElementById("parsed_year_code").innerText = `Year Code: ${yearCode}`;
       document.getElementById("parsed_bools").innerText = `Repose: ${repose}, AltDeco: ${altDeco}, Lightcore: ${lightcore}, Supercharger: ${supercharger}`;
-      document.getElementById("parsed_binary").innerText = `Binary: ${variantId}`;
+      document.getElementById("parsed_binary").innerText = `Binary: ${binaryVariantId}`;
       document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdMap[decoId]})`;
     }
   </script>
