@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variant ID Parser</title>
+  <style>
+    body {
+      background-color: #333;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    input[type="text"],
+    button {
+      margin: 5px;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: white;
+    }
+    button {
+      cursor: pointer;
+      background-color: #007bff;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    label {
+      margin-right: 10px;
+    }
+    #parsed_values label {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Variant ID Parser</h2>
+    <label for="variant_id_input">Enter Variant ID:</label>
+    <input type="text" id="variant_id_input">
+    <button onclick="parseVariantID()">Parse Variant ID</button>
+    <div id="parsed_values">
+      <label id="parsed_year_code"></label>
+      <label id="parsed_bools"></label>
+      <label id="parsed_deco_id"></label>
+    </div>
+  </div>
+
+  <script>
+    const decoIdMap = {
+      0: "Normal",
+      1: "Repose1",
+      2: "AlternateDeco",
+      3: "Legendary",
+      4: "Event",
+      5: "Repose2",
+      6: "LightDirect",
+      7: "LightStored",
+      8: "LightEnhanced",
+      9: "Repose3",
+      10: "Repose4",
+      11: "Repose5",
+      12: "Valentines",
+      13: "Easter",
+      14: "Winter",
+      15: "Virtual",
+      16: "Premium",
+      17: "GlowDark",
+      18: "StoneStatue",
+      19: "GlitterSpectrum",
+      20: "TreasureHunt2012",
+      21: "Halloween",
+      22: "TreasureHunt2013",
+      23: "ColorShift",
+      24: "WiiU",
+      25: "TH_BestBuy",
+      26: "TH_FritoLay",
+      29: "TreasureHunt2014",
+      30: "TreasureHunt2015",
+      31: "Mobile",
+    };
+
+    function parseVariantID() {
+      var variantId = document.getElementById("variant_id_input").value;
+      
+      // Split the variant ID into 4 parts: year code, bools, 0000, and DecoID
+      var yearCode = parseInt(variantId.substring(0, 4), 2);
+      var bools = variantId.substring(4, 8);
+      var decoId = parseInt(variantId.substring(12), 2);
+      
+      // Convert bools to individual boolean values
+      var repose = bools[0] === "1" ? "Yes" : "No";
+      var altDeco = bools[1] === "1" ? "Yes" : "No";
+      var lightcore = bools[2] === "1" ? "Yes" : "No";
+      var supercharger = bools[3] === "1" ? "Yes" : "No";
+      
+      // Display parsed values
+      document.getElementById("parsed_year_code").innerText = `Year Code: ${yearCode}`;
+      document.getElementById("parsed_bools").innerText = `Repose: ${repose}, AltDeco: ${altDeco}, Lightcore: ${lightcore}, Supercharger: ${supercharger}`;
+      document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdMap[decoId]})`;
+    }
+  </script>
+</body>
+</html>
