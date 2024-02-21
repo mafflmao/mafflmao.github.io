@@ -43,21 +43,11 @@
     .bool-checkbox {
       display: none;
     }
-    .bool-checkbox + label:before {
-      content: "\2713";
-      display: inline-block;
-      font-size: 14px;
-      color: transparent;
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
-      border: 1px solid #007bff;
-      text-align: center;
-      line-height: 16px;
-      margin-right: 5px;
+    .bool-text {
+      color: green;
     }
-    .bool-checkbox:checked + label:before {
-      color: #007bff;
+    .bool-text.false {
+      color: red;
     }
   </style>
 </head>
@@ -134,10 +124,10 @@
       
       // Display parsed values
       document.getElementById("parsed_year_code").innerText = `Year Code: ${yearText}`;
-      document.getElementById("parsed_bools").innerHTML = `<label>Repose: <input type="checkbox" class="bool-checkbox" ${repose === "Yes" ? "checked" : ""} disabled></label><br>
-                                                           <label>AltDeco: <input type="checkbox" class="bool-checkbox" ${altDeco === "Yes" ? "checked" : ""} disabled></label><br>
-                                                           <label>Lightcore: <input type="checkbox" class="bool-checkbox" ${lightcore === "Yes" ? "checked" : ""} disabled></label><br>
-                                                           <label>Supercharger: <input type="checkbox" class="bool-checkbox" ${supercharger === "Yes" ? "checked" : ""} disabled></label>`;
+      document.getElementById("parsed_bools").innerHTML = `<span class="bool-text ${repose === "Yes" ? "true" : "false"}">Repose</span><br>
+                                                           <span class="bool-text ${altDeco === "Yes" ? "true" : "false"}">AltDeco</span><br>
+                                                           <span class="bool-text ${lightcore === "Yes" ? "true" : "false"}">Lightcore</span><br>
+                                                           <span class="bool-text ${supercharger === "Yes" ? "true" : "false"}">Supercharger</span>`;
       document.getElementById("parsed_binary").innerText = `Binary: ${binaryVariantId}`;
       document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdText})`;
     }
