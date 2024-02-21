@@ -41,7 +41,23 @@
       display: block;
     }
     .bool-checkbox {
-      pointer-events: none;
+      display: none;
+    }
+    .bool-checkbox + label:before {
+      content: "\2713";
+      display: inline-block;
+      font-size: 14px;
+      color: transparent;
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid #007bff;
+      text-align: center;
+      line-height: 16px;
+      margin-right: 5px;
+    }
+    .bool-checkbox:checked + label:before {
+      color: #007bff;
     }
   </style>
 </head>
