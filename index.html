@@ -55,6 +55,10 @@
       font-size: 24px;
       margin-bottom: 20px;
     }
+    .bool-container {
+      display: flex;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -70,15 +74,22 @@
       <option value="5">Imaginators : 5</option>
     </select>
     <br>
-    <input type="checkbox" id="bool1_check">
-    <label for="bool1_check">Repose?</label>
-    <input type="checkbox" id="bool2_check">
-    <label for="bool2_check">AltDeco?</label>
-    <br>
-    <input type="checkbox" id="bool3_check">
-    <label for="bool3_check">Lightcore?</label>
-    <input type="checkbox" id="bool4_check">
-    <label for="bool4_check">Supercharger?</label>
+    <div class="bool-container">
+      <input type="checkbox" id="bool1_check">
+      <label for="bool1_check">Repose?</label>
+    </div>
+    <div class="bool-container">
+      <input type="checkbox" id="bool2_check">
+      <label for="bool2_check">AltDeco?</label>
+    </div>
+    <div class="bool-container">
+      <input type="checkbox" id="bool3_check">
+      <label for="bool3_check">Lightcore?</label>
+    </div>
+    <div class="bool-container">
+      <input type="checkbox" id="bool4_check">
+      <label for="bool4_check">Supercharger?</label>
+    </div>
     <br>
     <label for="deco_id_combobox">DecoID:</label>
     <select id="deco_id_combobox"></select>
@@ -161,7 +172,8 @@
       binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
     }
 
-    // Populate DecoID combobox
+    // Populate DecoID
+     combobox
     Object.keys(decoIdMap).forEach(function(key) {
       const option = document.createElement("option");
       option.text = key;
