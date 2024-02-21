@@ -9,11 +9,7 @@
       background-color: #333;
       color: white;
       font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      padding: 20px;
     }
     .container {
       background-color: #222;
@@ -44,6 +40,9 @@
     #parsed_values label {
       display: block;
     }
+    .bool-checkbox {
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -51,7 +50,7 @@
     <h2>Variant ID Reverser</h2>
     <label for="variant_id_input">Enter Variant ID:</label>
     <input type="text" id="variant_id_input">
-    <button onclick="parseVariantID()"> Reverse Variant ID</button>
+    <button onclick="parseVariantID()">Parse Variant ID</button>
     <div id="parsed_values">
       <label id="parsed_year_code"></label>
       <label id="parsed_bools"></label>
@@ -105,6 +104,12 @@
       var bools = binaryVariantId.substring(4, 8);
       var decoId = parseInt(binaryVariantId.substring(12), 2);
       
+      // Convert year code to text
+      var yearText = convertYearCodeToText(yearCode);
+      
+      // Convert DecoID to text
+      var decoIdText = decoIdMap[decoId];
+      
       // Convert bools to individual boolean values
       var repose = bools[0] === "1" ? "Yes" : "No";
       var altDeco = bools[1] === "1" ? "Yes" : "No";
@@ -112,10 +117,32 @@
       var supercharger = bools[3] === "1" ? "Yes" : "No";
       
       // Display parsed values
-      document.getElementById("parsed_year_code").innerText = `Year Code: ${yearCode}`;
-      document.getElementById("parsed_bools").innerText = `Repose: ${repose}, AltDeco: ${altDeco}, Lightcore: ${lightcore}, Supercharger: ${supercharger}`;
+      document.getElementById("parsed_year_code").innerText = `Year Code: ${yearText}`;
+      document.getElementById("parsed_bools").innerHTML = `<label>Repose: <input type="checkbox" class="bool-checkbox" ${repose === "Yes" ? "checked" : ""} disabled></label><br>
+                                                           <label>AltDeco: <input type="checkbox" class="bool-checkbox" ${altDeco === "Yes" ? "checked" : ""} disabled></label><br>
+                                                           <label>Lightcore: <input type="checkbox" class="bool-checkbox" ${lightcore === "Yes" ? "checked" : ""} disabled></label><br>
+                                                           <label>Supercharger: <input type="checkbox" class="bool-checkbox" ${supercharger === "Yes" ? "checked" : ""} disabled></label>`;
       document.getElementById("parsed_binary").innerText = `Binary: ${binaryVariantId}`;
-      document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdMap[decoId]})`;
+      document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdText})`;
+    }
+
+    function convertYearCodeToText(yearCode) {
+      switch (yearCode) {
+        case 0:
+          return "Spyro's Adventure";
+        case 1:
+          return "Giants";
+        case 2:
+          return "Swap Force";
+        case 3:
+          return "Trap Team";
+        case 4:
+          return "Superchargers";
+        case 5:
+          return "Imaginators";
+        default:
+          return "Unknown";
+      }
     }
   </script>
 </body>
