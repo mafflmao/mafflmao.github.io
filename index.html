@@ -98,6 +98,7 @@
     fetch('decoid.txt')
   .then(response => response.text())
   .then(text => {
+    console.log('DecoID mappings text:', text);
     const decoIdMap = {};
     const lines = text.split('\n');
     lines.forEach(line => {
@@ -106,6 +107,7 @@
         decoIdMap[parts[1]] = parseInt(parts[0]);
       }
     });
+    console.log('DecoID mappings:', decoIdMap);
     populateDecoIdCombobox(decoIdMap);
     // Call generateVariantID() after decoIdMap is populated
     generateVariantID();
