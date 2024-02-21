@@ -96,19 +96,21 @@
   <script>
     // Fetch DecoID mappings from decoid.txt
     fetch('decoid.txt')
-      .then(response => response.text())
-      .then(text => {
-        const decoIdMap = {};
-        const lines = text.split('\n');
-        lines.forEach(line => {
-          const parts = line.split(',');
-          if (parts.length === 2) {
-            decoIdMap[parts[1]] = parseInt(parts[0]);
-          }
-        });
-        populateDecoIdCombobox(decoIdMap);
-      })
-      .catch(error => console.error('Error fetching DecoID mappings:', error));
+  .then(response => response.text())
+  .then(text => {
+    const decoIdMap = {};
+    const lines = text.split('\n');
+    lines.forEach(line => {
+      const parts = line.split(',');
+      if (parts.length === 2) {
+        decoIdMap[parts[1]] = parseInt(parts[0]);
+      }
+    });
+    populateDecoIdCombobox(decoIdMap);
+    // Call generateVariantID() after decoIdMap is populated
+    generateVariantID();
+  })
+  .catch(error => console.error('Error fetching DecoID mappings:', error));
 
     function populateDecoIdCombobox(decoIdMap) {
       const decoIdCombobox = document.getElementById("deco_id_combobox");
