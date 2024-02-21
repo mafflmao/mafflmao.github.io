@@ -95,11 +95,12 @@
 
   <script>
     // Fetch DecoID mappings from decoid.txt
-    fetch('decoid.txt')
+    let decoIdMap; // Define decoIdMap as a global variable
+
+fetch('decoid.txt')
   .then(response => response.text())
   .then(text => {
-    console.log('DecoID mappings text:', text);
-    const decoIdMap = {};
+    decoIdMap = {}; // Assign to the global variable
     const lines = text.split('\n');
     lines.forEach(line => {
       const parts = line.split(',');
@@ -107,14 +108,11 @@
         decoIdMap[parts[1]] = parseInt(parts[0]);
       }
     });
-    console.log('DecoID mappings:', decoIdMap);
     populateDecoIdCombobox(decoIdMap);
-    // Call generateVariantID() after decoIdMap is populated
-    console.log('Calling generateVariantID()...');
-    generateVariantID();
-    console.log('generateVariantID() called.');
+    generateVariantID(); // Call generateVariantID() after decoIdMap is populated
   })
   .catch(error => console.error('Error fetching DecoID mappings:', error));
+
 
     function populateDecoIdCombobox(decoIdMap) {
       const decoIdCombobox = document.getElementById("deco_id_combobox");
