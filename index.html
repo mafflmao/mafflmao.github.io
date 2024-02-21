@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Variant ID Generator and Reverser</title>
+  <title>Variant ID Generator</title>
   <style>
     body {
       background-color: #333;
       color: white;
       font-family: Arial, sans-serif;
-      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
     .container {
       background-color: #222;
@@ -18,7 +22,8 @@
       text-align: center;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
-    input[type="text"],
+    select,
+    input[type="checkbox"],
     button {
       margin: 5px;
       padding: 8px;
@@ -37,16 +42,26 @@
     label {
       margin-right: 10px;
     }
-    #parsed_values label {
-      display: block;
+    #variant_id_label,
+    #binary_values_label {
+      margin-top: 10px;
+    }
+    #footer {
+      font-size: 12px;
+      margin-top: 20px;
+      color: #888;
+    }
+    #header {
+      font-size: 24px;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Variant ID Generator</h2>
-    <label for="year_entry_dropdown">Year Code:</label>
-    <select id="year_entry_dropdown">
+    <div id="header">Variant ID Generator for Skylanders</div>
+    <label for="year_entry">Year Code:</label>
+    <select id="year_entry">
       <option value="0">Spyro's Adventure : 0</option>
       <option value="1">Giants : 1</option>
       <option value="2">Swap Force : 2</option>
@@ -55,154 +70,100 @@
       <option value="5">Imaginators : 5</option>
     </select>
     <br>
-    <label>Repose:</label>
     <input type="checkbox" id="bool1_check">
-    <label>AltDeco:</label>
+    <label for="bool1_check">Repose?</label>
     <input type="checkbox" id="bool2_check">
-    <label>Lightcore:</label>
-    <input type="checkbox" id="bool3_check">
-    <label>Supercharger:</label>
-    <input type="checkbox" id="bool4_check">
+    <label for="bool2_check">AltDeco?</label>
     <br>
-    <label for="deco_id_entry_dropdown">DecoID:</label>
-    <select id="deco_id_entry_dropdown">
-      <option value="Normal">Normal</option>
-      <option value="Repose1">Repose1</option>
-      <option value="AlternateDeco">AlternateDeco</option>
-      <option value="Legendary">Legendary</option>
-      <option value="Event">Event</option>
-      <option value="Repose2">Repose2</option>
-      <option value="LightDirect">LightDirect</option>
-      <option value="LightStored">LightStored</option>
-      <option value="LightEnhanced">LightEnhanced</option>
-      <option value="Repose3">Repose3</option>
-      <option value="Repose4">Repose4</option>
-      <option value="Repose5">Repose5</option>
-      <option value="Valentines">Valentines</option>
-      <option value="Easter">Easter</option>
-      <option value="Winter">Winter</option>
-      <option value="Virtual">Virtual</option>
-      <option value="Premium">Premium</option>
-      <option value="GlowDark">GlowDark</option>
-      <option value="StoneStatue">StoneStatue</option>
-      <option value="GlitterSpectrum">GlitterSpectrum</option>
-      <option value="TreasureHunt2012">TreasureHunt2012</option>
-      <option value="Halloween">Halloween</option>
-      <option value="TreasureHunt2013">TreasureHunt2013</option>
-      <option value="ColorShift">ColorShift</option>
-      <option value="WiiU">WiiU</option>
-      <option value="TH_BestBuy">TH_BestBuy</option>
-      <option value="TH_FritoLay">TH_FritoLay</option>
-      <option value="TreasureHunt2014">TreasureHunt2014</option>
-      <option value="TreasureHunt2015">TreasureHunt2015</option>
-      <option value="Mobile">Mobile</option>
-    </select>
+    <input type="checkbox" id="bool3_check">
+    <label for="bool3_check">Lightcore?</label>
+    <input type="checkbox" id="bool4_check">
+    <label for="bool4_check">Supercharger?</label>
+    <br>
+    <label for="deco_id_combobox">DecoID:</label>
+    <select id="deco_id_combobox"></select>
     <br>
     <button onclick="generateVariantID()">Generate Variant ID</button>
-    <div id="variant_id_results">
-      <label id="variant_id_label"></label>
-      <label id="binary_values_label"></label>
-    </div>
-  </div>
-
-  <div class="container">
-    <h2>Variant ID Reverser</h2>
-    <label for="variant_id_input">Enter Variant ID:</label>
-    <input type="text" id="variant_id_input">
-    <button onclick="parseVariantID()">Parse Variant ID</button>
-    <div id="parsed_values">
-      <label id="parsed_year_code"></label>
-      <label id="parsed_bools"></label>
-      <label id="parsed_binary"></label>
-      <label id="parsed_deco_id"></label>
+    <br>
+    <label id="variant_id_label"></label>
+    <br>
+    <label id="binary_values_label"></label>
+    <div id="footer">
+      This wouldn’t have been possible without <a href="https://github.com/NefariousTechSupport/Runes/blob/master/Docs/SkylanderFormat.md#sub-type" target="_blank">Runes by NefariousTechSupport</a>.
     </div>
   </div>
 
   <script>
     const decoIdMap = {
-      0: "Normal",
-      1: "Repose1",
-      2: "AlternateDeco",
-      3: "Legendary",
-      4: "Event",
-      5: "Repose2",
-      6: "LightDirect",
-      7: "LightStored",
-      8: "LightEnhanced",
-      9: "Repose3",
-      10: "Repose4",
-      11: "Repose5",
-      12: "Valentines",
-      13: "Easter",
-      14: "Winter",
-      15: "Virtual",
-      16: "Premium",
-      17: "GlowDark",
-      18: "StoneStatue",
-      19: "GlitterSpectrum",
-      20: "TreasureHunt2012",
-      21: "Halloween",
-      22: "TreasureHunt2013",
-      23: "ColorShift",
-      24: "WiiU",
-      25: "TH_BestBuy",
-      26: "TH_FritoLay",
-      29: "TreasureHunt2014",
-      30: "TreasureHunt2015",
-      31: "Mobile",
+      "Normal": 0,
+      "Repose1": 1,
+      "AlternateDeco": 2,
+      "Legendary": 3,
+      "Event": 4,
+      "Repose2": 5,
+      "LightDirect": 6,
+      "LightStored": 7,
+      "LightEnhanced": 8,
+      "Repose3": 9,
+      "Repose4": 10,
+      "Repose5": 11,
+      "Valentines": 12,
+      "Easter": 13,
+      "Winter": 14,
+      "Virtual": 15,
+      "Premium": 16,
+      "GlowDark": 17,
+      "StoneStatue": 18,
+      "GlitterSpectrum": 19,
+      "TreasureHunt2012": 20,
+      "Halloween": 21,
+      "TreasureHunt2013": 22,
+      "ColorShift": 23,
+      "WiiU": 24,
+      "TH_BestBuy": 25,
+      "TH_FritoLay": 26,
+      "TreasureHunt2014": 29,
+      "TreasureHunt2015": 30,
+      "Mobile": 31,
     };
 
+    const yearEntry = document.getElementById("year_entry");
+    const bool1Check = document.getElementById("bool1_check");
+    const bool2Check = document.getElementById("bool2_check");
+    const bool3Check = document.getElementById("bool3_check");
+    const bool4Check = document.getElementById("bool4_check");
+    const decoIdCombobox = document.getElementById("deco_id_combobox");
+    const variantIdLabel = document.getElementById("variant_id_label");
+    const binaryValuesLabel = document.getElementById("binary_values_label");
+
     function generateVariantID() {
-      var year = document.getElementById("year_entry_dropdown").value;
-      var bool1 = document.getElementById("bool1_check").checked ? 1 : 0;
-      var bool2 = document.getElementById("bool2_check").checked ? 1 : 0;
-      var bool3 = document.getElementById("bool3_check").checked ? 1 : 0;
-      var bool4 = document.getElementById("bool4_check").checked ? 1 : 0;
-      var decoId = document.getElementById("deco_id_entry_dropdown").value;
+      const yearCode = parseInt(yearEntry.value);
+      const bool1 = bool1Check.checked ? 1 : 0;
+      const bool2 = bool2Check.checked ? 1 : 0;
+      const bool3 = bool3Check.checked ? 1 : 0;
+      const bool4 = bool4Check.checked ? 1 : 0;
+      const selectedDecoIdName = decoIdCombobox.value;
       
-      // Map the DecoID to its corresponding value
-      var decoIdValue = Object.keys(decoIdMap).find(key => decoIdMap[key] === decoId);
+      const decoId = decoIdMap[selectedDecoIdName];
 
-      // Convert to binary strings
-      var yearBinary = format(year, '04b')[-4:];  // Limiting to 4 bits and padding with zeros
-      var boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
-      var decoIdBinary = format(decoIdValue, '04b')[-4:];  // Limiting to 4 bits and padding with zeros
+      const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
+      const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
+      const decoIdBinary = ('0000' + decoId.toString(2)).slice(-4);
 
-      // Concatenate all parts to form the variant ID
-      var variantID = `${yearBinary}${boolBinary}0000${decoIdBinary}`;
-      
-      document.getElementById("variant_id_label").innerText = "Variant ID: " + variantID;
-      
-      // Combine binary sections
-      var combinedBinary = yearBinary + boolBinary + "0000" + decoIdBinary;
-      var combinedDecimal = parseInt(combinedBinary, 2);
+      const variantId = `${yearBinary}${boolBinary}0000${decoIdBinary}`;
+      variantIdLabel.innerText = "Binary: " + variantId;
 
-      document.getElementById("binary_values_label").innerText = `Binary: ${combinedBinary}, Variant ID: ${combinedDecimal}`;
+      const combinedBinary = yearBinary + boolBinary + "0000" + decoIdBinary;
+      const combinedDecimal = parseInt(combinedBinary, 2);
+      binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
     }
 
-    function parseVariantID() {
-      var variantId = document.getElementById("variant_id_input").value;
-      
-      // Convert the variant ID to binary and ensure it's 16 digits
-      var binaryVariantId = parseInt(variantId, 10).toString(2).padStart(16, '0');
-      
-      // Split the binary variant ID into 4 parts: year code, bools, 0000, and DecoID
-      var yearCode = parseInt(binaryVariantId.substring(0, 4), 2);
-      var bools = binaryVariantId.substring(4, 8);
-      var decoId = parseInt(binaryVariantId.substring(12), 2);
-      
-      // Convert bools to individual boolean values
-      var repose = bools[0] === "1" ? "Yes" : "No";
-      var altDeco = bools[1] === "1" ? "Yes" : "No";
-      var lightcore = bools[2] === "1" ? "Yes" : "No";
-      var supercharger = bools[3] === "1" ? "Yes" : "No";
-      
-      // Display parsed values
-      document.getElementById("parsed_year_code").innerText = `Year Code: ${yearCode}`;
-      document.getElementById("parsed_bools").innerText = `Repose: ${repose}, AltDeco: ${altDeco}, Lightcore: ${lightcore}, Supercharger: ${supercharger}`;
-      document.getElementById("parsed_binary").innerText = `Binary: ${binaryVariantId}`;
-      document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdMap[decoId]})`;
-    }
+    // Populate DecoID combobox
+    Object.keys(decoIdMap).forEach(function(key) {
+      const option = document.createElement("option");
+      option.text = key;
+      decoIdCombobox.add(option);
+    });
   </script>
 </body>
 </html>
