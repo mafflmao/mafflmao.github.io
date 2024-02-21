@@ -58,6 +58,7 @@
     .bool-container {
       display: flex;
       align-items: center;
+      justify-content: center;
     }
   </style>
 </head>
@@ -172,8 +173,7 @@
       binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
     }
 
-    // Populate DecoID
-     combobox
+    // Populate DecoID combobox
     Object.keys(decoIdMap).forEach(function(key) {
       const option = document.createElement("option");
       option.text = key;
