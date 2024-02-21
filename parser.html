@@ -55,6 +55,7 @@
     <div id="parsed_values">
       <label id="parsed_year_code"></label>
       <label id="parsed_bools"></label>
+      <label id="parsed_binary"></label>
       <label id="parsed_deco_id"></label>
     </div>
   </div>
@@ -110,6 +111,7 @@
       // Display parsed values
       document.getElementById("parsed_year_code").innerText = `Year Code: ${yearCode}`;
       document.getElementById("parsed_bools").innerText = `Repose: ${repose}, AltDeco: ${altDeco}, Lightcore: ${lightcore}, Supercharger: ${supercharger}`;
+      document.getElementById("parsed_binary").innerText = `Binary: ${variantId}`;
       document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdMap[decoId]})`;
     }
   </script>
