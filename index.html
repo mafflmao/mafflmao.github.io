@@ -154,8 +154,13 @@ fetch('decoid.txt')
       const combinedBinary = yearBinary + boolBinary + "0000" + decoIdBinary;
       const combinedDecimal = parseInt(combinedBinary, 2);
       binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
-      console.log(`Variant ID Generated! ID is ${combinedDecimal}
-      Yearcode=${yearCode} Repose=${bool1} AltDeco=${bool2} Lightcore=${bool3} Supercharger=${bool4}`)
+      console.log(`Variant ID Generated! ID is ${combinedDecimal}`)
+      console.log(`Yearcode=${yearCode}`)
+      console.log(`Repose=${bool1}`) 
+      console.log(`AltDeco=${bool2}`)
+      console.log(`Lightcore=${bool3}`)
+      console.log(`Supercharger=${bool4}`)
+      console.log(`DecoID=${selectedDecoIdName},${`decoId`}`)
     }
   </script>
 </body>
