@@ -214,8 +214,10 @@ button {
       switch (templateName) {
         case 'Template 1':
           yearEntry.value = '1'; // Year Code 1
+          bool1Check.checked = false; // added these to stop glitches :)
           bool2Check.checked = true; // Alt deco
           bool3Check.checked = true; // Lightcore
+          bool4Check.checked = false; // added these to stop glitches :)
           decoIdCombobox.value = 'AlternateDeco'; // Deco ID 1
           generateVariantID(); // Generate the variant ID based on the template
           break;
@@ -223,6 +225,9 @@ button {
         case 'Template 2':
           yearEntry.value = '1'; // Year Code 1
           bool1Check.checked = true;
+          bool2Check.checked = false;
+          bool3Check.checked = false;
+          bool4Check.checked = false;
           decoIdCombobox.value = 'Repose1';
           generateVariantID();
         break;
