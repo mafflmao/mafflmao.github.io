@@ -91,6 +91,21 @@ button {
 #templates button:hover {
   background-color: #0056b3;
 }
+#giantstemplates button {
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ff6600;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#templates button:hover {
+  background-color: #66310d;
+}
   </style>
 </head>
 <body>
@@ -132,10 +147,10 @@ button {
     <div id="templates">
       <h2>Variant ID Templates</h2>
       <button onclick="applyTemplate('Template 1')">Lightcore Punch Pop Fizz</button>
+    </div>
+    <div id="giantstemplates">
+      <h2>Variant ID Templates</h2>
       <button onclick="applyTemplate('Template 2')">Series 2</button>
-      <button onclick="applyTemplate('Template 3')">Series 3</button>
-      <button onclick="applyTemplate('Template 4')">Series 4</button>
-      <button onclick="applyTemplate('Template 5')">Series 5</button>
     </div>
   </div>
 
