@@ -22,6 +22,17 @@ async function sendCommand(device, commandData) {
     }
 }
 
+async function receiveData(device) {
+    try {
+        // Assuming the report ID is 0 for feature reports
+        const reportId = 0;
+        const inputReport = await device.receiveFeatureReport(reportId);
+        console.log("Received data:", inputReport.data);
+    } catch (error) {
+        console.error("Error receiving data:", error);
+    }
+}
+
 async function startHIDCommunication() {
     try {
         const device = await navigator.hid.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] });
@@ -29,6 +40,9 @@ async function startHIDCommunication() {
         // Example: Command to activate a specific feature on the portal
         const commandData = [0x01, 0x02, 0x03]; // Example command data
         await sendCommand(device, commandData);
+
+        // Receive and print response data
+        await receiveData(device);
     } catch (error) {
         console.error("Error:", error);
     }
