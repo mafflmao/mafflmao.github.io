@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skylanders Portal Control</title>
+</head>
+<body>
+
+<button onclick="startHIDCommunication()">Send Command</button>
+
+<script>
+async function sendCommand(device, commandData) {
+    try {
+        // Assuming the report ID is 0 for feature reports
+        const reportId = 0;
+        const reportData = new Uint8Array(commandData);
+        await device.sendFeatureReport(reportId, reportData);
+        console.log("Command sent successfully");
+    } catch (error) {
+        console.error("Error sending command:", error);
+    }
+}
+
+async function startHIDCommunication() {
+    try {
+        const device = await navigator.hid.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] });
+
+        // Example: Command to activate a specific feature on the portal
+        const commandData = [0x01, 0x02, 0x03]; // Example command data
+        await sendCommand(device, commandData);
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+</script>
+
+</body>
+</html>
