@@ -132,10 +132,10 @@ button {
     <div id="templates">
       <h2>Variant ID Templates</h2>
       <button onclick="applyTemplate('Template 1')">Lightcore Punch Pop Fizz</button>
-      <button onclick="applyTemplate('Template 2')">Basic Series 2</button>
-      <button onclick="applyTemplate('Template 3')">Basic Series 3</button>
-      <button onclick="applyTemplate('Template 4')">Basic Series 4</button>
-      <!-- Add more buttons for other templates if needed -->
+      <button onclick="applyTemplate('Template 2')">Series 2</button>
+      <button onclick="applyTemplate('Template 3')">Series 3</button>
+      <button onclick="applyTemplate('Template 4')">Series 4</button>
+      <button onclick="applyTemplate('Template 5')">Series 5</button>
     </div>
   </div>
 
@@ -249,6 +249,15 @@ button {
           bool3Check.checked = false;
           bool4Check.checked = false;
           decoIdCombobox.value = 'Repose2';
+          generateVariantID();
+        break;
+          case 'Template 5':
+          yearEntry.value = '4'; // Year Code 1
+          bool1Check.checked = true;
+          bool2Check.checked = false;
+          bool3Check.checked = false;
+          bool4Check.checked = false;
+          decoIdCombobox.value = 'Repose4';
           generateVariantID();
         break;
         default:
