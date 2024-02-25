@@ -60,16 +60,16 @@
 <div id="deviceInfo"></div>
 <button onclick="sendCommand()">Send Command</button>
 <script>
-let device;
+let connectedDevice; 
 
 async function sendCommand(input) {
-  if (!device) {
+  if (!connectedDevice) {
     console.error('No device connected');
     return;
   }
 
   try {
-    const result = await device.controlTransferOut({
+    const result = await connectedDevice.controlTransferOut({
       requestType: 'vendor',
       recipient: 'device',
       request: 721301, // Custom request code
@@ -91,19 +91,16 @@ async function connectToDevice() {
       for (let i = 0; i < devices.length; i++) {
         const d = devices[i];
         if (d.vendorId === 0x1430 && d.productId === 0x0150) { // Replace with your vendor and product IDs
-          device = d;
-          await device.open();
-          await device.selectConfiguration(1); // Select appropriate configuration
-          await device.claimInterface(0); // Claim appropriate interface
-          console.log('Device connected:', device);
+          connectedDevice = d;
+          console.log('Device connected:', connectedDevice);
           return; // Exit the loop if the device is found
         }
       }
       console.log('No matching device found');
-      device = null;
+      connectedDevice = null;
     } else {
       console.log('No device connected');
-      device = null;
+      connectedDevice = null;
     }
   } catch (error) {
     console.error('Error connecting to device:', error);
