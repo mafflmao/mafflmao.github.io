@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal Detector :)</title>
+<title>USB Device Status</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -58,38 +58,63 @@
 <div id="status"></div>
 <div id="message">Status: Waiting for action...</div>
 <div id="deviceInfo"></div>
-<button onclick="checkDevice()">Check Device</button>
+<button onclick="sendCommand()">Send Command</button>
 <script>
-function setStatus(color) {
-  document.getElementById('status').style.backgroundColor = color;
+let device;
+
+async function sendCommand(input) {
+  if (!device) {
+    console.error('No device connected');
+    return;
+  }
+
+  try {
+    const result = await device.controlTransferOut({
+      requestType: 'vendor',
+      recipient: 'device',
+      request: 721301, // Custom request code
+      value: 0,
+      index: 0
+    }, input);
+    
+    console.log('Command sent successfully:', result);
+  } catch (error) {
+    console.error('Error sending command:', error);
+  }
 }
 
-function setMessage(message) {
-  document.getElementById('message').textContent = message;
+async function connectToDevice() {
+  try {
+    const devices = await navigator.usb.getDevices();
+    if (devices.length > 0) {
+      // Iterate through connected devices to find the specific device
+      for (let i = 0; i < devices.length; i++) {
+        const d = devices[i];
+        if (d.vendorId === 0x1430 && d.productId === 0x0150) { // Replace with your vendor and product IDs
+          device = d;
+          await device.open();
+          await device.selectConfiguration(1); // Select appropriate configuration
+          await device.claimInterface(0); // Claim appropriate interface
+          console.log('Device connected:', device);
+          return; // Exit the loop if the device is found
+        }
+      }
+      console.log('No matching device found');
+      device = null;
+    } else {
+      console.log('No device connected');
+      device = null;
+    }
+  } catch (error) {
+    console.error('Error connecting to device:', error);
+  }
 }
 
-function appendDeviceInfo(deviceInfo) {
-  document.getElementById('deviceInfo').textContent += deviceInfo + '\n\n';
-}
+// Call connectToDevice function initially
+connectToDevice();
 
-function checkDevice() {
-  navigator.usb.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] })
-    .then(device => {
-      console.log('Portal found!', device);
-      setStatus('green');
-      setMessage('Status: Portal Connected!');
-      appendDeviceInfo('Device Information:\n');
-      appendDeviceInfo('Vendor ID: 0x' + device.vendorId.toString(16));
-      appendDeviceInfo('Product ID: 0x' + device.productId.toString(16));
-      appendDeviceInfo('Product Name: ' + device.productName);
-      // Add more device properties as needed
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      setStatus('red');
-      setMessage('Status: Portal not Connected.');
-    });
-}
+// Periodically check if the device is connected
+setInterval(connectToDevice, 1000); // Adjust interval as needed
 </script>
 </body>
 </html>
