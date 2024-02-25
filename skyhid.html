@@ -36,9 +36,17 @@ async function sendCommand(input) {
 
 async function connectToDevice() {
   try {
-    connectedDevice = await navigator.usb.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] });
-    setStatus('green'); // Update UI
-    console.log('Device connected:', connectedDevice);
+    const devices = await navigator.usb.getDevices();
+    const matchingDevices = devices.filter(device => device.vendorId === 0x1430 && device.productId === 0x0150);
+    if (matchingDevices.length > 0) {
+      connectedDevice = matchingDevices[0];
+      setStatus('green'); // Update UI
+      console.log('Device connected:', connectedDevice);
+    } else {
+      console.log('No matching device found');
+      setStatus('red'); // Update UI
+      connectedDevice = null;
+    }
   } catch (error) {
     console.error('Error connecting to device:', error);
     setStatus('red'); // Update UI
@@ -50,9 +58,8 @@ function setStatus(color) {
   document.getElementById('status').style.backgroundColor = color;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  connectToDevice();
-});
+// Call connectToDevice function initially
+connectToDevice();
 </script>
 </body>
 </html>
