@@ -5,68 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>USB Device Status</title>
 <style>
-  /* CSS styles for UI */
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  #status {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: red;
+  }
 </style>
 </head>
 <body>
 <div id="status"></div>
+<button onclick="checkDevice()">Check Device</button>
 <script>
-let connectedDevice;
-
-async function sendCommand(input) {
-  if (!connectedDevice) {
-    console.error('No device connected');
-    return;
-  }
-
-  try {
-    const result = await connectedDevice.controlTransferOut({
-      requestType: 'vendor',
-      recipient: 'device',
-      request: 721301, // Custom request code
-      value: 0,
-      index: 0
-    }, input);
-
-    console.log('Command sent successfully:', result);
-  } catch (error) {
-    console.error('Error sending command:', error);
-  }
-}
-
-async function connectToDevice() {
-  try {
-    const devices = await navigator.usb.getDevices();
-    const matchingDevices = devices.filter(device => device.vendorId === 0x1430 && device.productId === 0x0150);
-    if (matchingDevices.length > 0) {
-      // Check if the device is already connected
-      if (!connectedDevice) {
-        connectedDevice = matchingDevices[0];
-        setStatus('green'); // Update UI
-        console.log('Device connected:', connectedDevice);
-      }
-    } else {
-      // Device not found, reset connectedDevice
-      connectedDevice = null;
-      setStatus('red'); // Update UI
-      console.log('No matching device found');
-    }
-  } catch (error) {
-    console.error('Error connecting to device:', error);
-    connectedDevice = null;
-    setStatus('red'); // Update UI
-  }
-}
-
 function setStatus(color) {
   document.getElementById('status').style.backgroundColor = color;
 }
 
-// Periodically check for connected devices
-setInterval(connectToDevice, 1000); // Adjust interval as needed
-
-// Call connectToDevice function initially
-connectToDevice();
+function checkDevice() {
+  navigator.usb.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] })
+    .then(device => {
+      console.log('Device found:', device);
+      setStatus('green');
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      setStatus('red');
+    });
+}
 </script>
 </body>
 </html>
