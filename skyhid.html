@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USB Device Status</title>
+<title>Portal Detector</title>
 <style>
   body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -17,15 +18,36 @@
     height: 100px;
     border-radius: 50%;
     background-color: red;
+    margin-bottom: 20px;
+  }
+  #message {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  #deviceInfo {
+    font-size: 16px;
+    text-align: left;
+    white-space: pre-wrap;
   }
 </style>
 </head>
 <body>
 <div id="status"></div>
+<div id="message">Status: Waiting for action...</div>
+<div id="deviceInfo"></div>
 <button onclick="checkDevice()">Check Device</button>
 <script>
 function setStatus(color) {
   document.getElementById('status').style.backgroundColor = color;
+}
+
+function setMessage(message) {
+  document.getElementById('message').textContent = message;
+}
+
+function appendDeviceInfo(deviceInfo) {
+  document.getElementById('deviceInfo').textContent += deviceInfo + '\n\n';
 }
 
 function checkDevice() {
@@ -33,10 +55,17 @@ function checkDevice() {
     .then(device => {
       console.log('Device found:', device);
       setStatus('green');
+      setMessage('Status: Device found');
+      appendDeviceInfo('Device Information:\n');
+      appendDeviceInfo('Vendor ID: 0x' + device.vendorId.toString(16));
+      appendDeviceInfo('Product ID: 0x' + device.productId.toString(16));
+      appendDeviceInfo('Product Name: ' + device.productName);
+      // Add more device properties as needed
     })
     .catch(error => {
       console.error('Error:', error);
       setStatus('red');
+      setMessage('Status: Error occurred');
     });
 }
 </script>
