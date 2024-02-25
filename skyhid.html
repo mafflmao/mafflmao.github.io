@@ -3,55 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal Status</title>
-<style>   
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f3f3f3;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
-  #status {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: red;
-    margin-bottom: 20px;
-  }
-  #message {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  #deviceInfo {
-    font-size: 16px;
-    text-align: left;
-    white-space: pre-wrap;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    overflow-x: auto;
-  }
-  button {
-    font-size: 16px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
+<title>USB Device Status</title>
+<style>
+  /* CSS styles for UI */
 </style>
 </head>
 <body>
@@ -85,18 +39,22 @@ async function connectToDevice() {
     const devices = await navigator.usb.getDevices();
     const matchingDevices = devices.filter(device => device.vendorId === 0x1430 && device.productId === 0x0150);
     if (matchingDevices.length > 0) {
-      connectedDevice = matchingDevices[0];
-      setStatus('green'); // Update UI
-      console.log('Device connected:', connectedDevice);
+      // Check if the device is already connected
+      if (!connectedDevice) {
+        connectedDevice = matchingDevices[0];
+        setStatus('green'); // Update UI
+        console.log('Device connected:', connectedDevice);
+      }
     } else {
-      console.log('No matching device found');
-      setStatus('red'); // Update UI
+      // Device not found, reset connectedDevice
       connectedDevice = null;
+      setStatus('red'); // Update UI
+      console.log('No matching device found');
     }
   } catch (error) {
     console.error('Error connecting to device:', error);
-    setStatus('red'); // Update UI
     connectedDevice = null;
+    setStatus('red'); // Update UI
   }
 }
 
@@ -104,10 +62,11 @@ function setStatus(color) {
   document.getElementById('status').style.backgroundColor = color;
 }
 
+// Periodically check for connected devices
+setInterval(connectToDevice, 1000); // Adjust interval as needed
+
 // Call connectToDevice function initially
 connectToDevice();
-
-setInterval(connectToDevice, 1000);
 </script>
 </body>
 </html>
