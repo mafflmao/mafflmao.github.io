@@ -85,27 +85,13 @@ async function sendCommand(input) {
 
 async function connectToDevice() {
   try {
-    const devices = await navigator.usb.getDevices();
-    if (devices.length > 0) {
-      for (let i = 0; i < devices.length; i++) {
-        const d = devices[i];
-        if (d.vendorId === 0x1430 && d.productId === 0x0150) {
-          connectedDevice = d;
-          setStatus('green'); // Update UI
-          console.log('Device connected:', connectedDevice);
-          return;
-        }
-      }
-      console.log('No matching device found');
-      connectedDevice = null;
-    } else {
-      console.log('No device connected');
-      setStatus('red'); // Update UI
-      connectedDevice = null;
-    }
+    connectedDevice = await navigator.usb.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] });
+    setStatus('green'); // Update UI
+    console.log('Device connected:', connectedDevice);
   } catch (error) {
     console.error('Error connecting to device:', error);
     setStatus('red'); // Update UI
+    connectedDevice = null;
   }
 }
 
@@ -115,10 +101,6 @@ function setStatus(color) {
 
 // Call connectToDevice function initially
 connectToDevice();
-
-// Periodically check if the device is connected
-setInterval(connectToDevice, 1000); // Adjust interval as needed
-
 </script>
 </body>
 </html>
