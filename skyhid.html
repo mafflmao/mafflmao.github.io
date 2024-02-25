@@ -3,104 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>portallll</title>
+<title>USB Device Status</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f3f3f3;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
-  #status {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: red;
-    margin-bottom: 20px;
-  }
-  #message {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  #deviceInfo {
-    font-size: 16px;
-    text-align: left;
-    white-space: pre-wrap;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    overflow-x: auto;
-  }
-  button {
-    font-size: 16px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
+  /* CSS thingies, ill add this later. */
 </style>
 </head>
 <body>
 <div id="status"></div>
-<div id="message">Status: Waiting for action...</div>
-<div id="deviceInfo"></div>
-<button onclick="sendCommand()">Send Command</button>
-<script>
-let connectedDevice;
-
-async function sendCommand(input) {
-  if (!connectedDevice) {
-    console.error('No device connected');
-    return;
-  }
-
-  try {
-    const result = await connectedDevice.controlTransferOut({
-      requestType: 'vendor',
-      recipient: 'device',
-      request: 721301, // Custom request code
-      value: 0,
-      index: 0
-    }, input);
-
-    console.log('Command sent successfully:', result);
-  } catch (error) {
-    console.error('Error sending command:', error);
-  }
-}
-
-async function connectToDevice() {
-  try {
-    connectedDevice = await navigator.usb.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] });
-    setStatus('green'); // Update UI
-    console.log('Device connected:', connectedDevice);
-  } catch (error) {
-    console.error('Error connecting to device:', error);
-    setStatus('red'); // Update UI
-    connectedDevice = null;
-  }
-}
-
-function setStatus(color) {
-  document.getElementById('status').style.backgroundColor = color;
-}
-
-// Call connectToDevice function initially
-connectToDevice();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
