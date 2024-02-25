@@ -1,53 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skylanders Portal Control</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Detector :)</title>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  #status {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: red;
+    margin-bottom: 20px;
+  }
+  #message {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  #deviceInfo {
+    font-size: 16px;
+    text-align: left;
+  }
+</style>
 </head>
 <body>
-
-<button onclick="startHIDCommunication()">Send Command</button>
-
+<div id="status"></div>
+<div id="message">Status: Waiting for action...</div>
+<div id="deviceInfo"></div>
+<button onclick="checkDevice()">Check Device</button>
 <script>
-async function sendCommand(device, commandData) {
-    try {
-        // Assuming the report ID is 0 for feature reports
-        const reportId = 0;
-        const reportData = new Uint8Array(commandData);
-        await device.sendFeatureReport(reportId, reportData);
-        console.log("Command sent successfully");
-    } catch (error) {
-        console.error("Error sending command:", error);
-    }
+function setStatus(color) {
+  document.getElementById('status').style.backgroundColor = color;
 }
 
-async function receiveData(device) {
-    try {
-        // Assuming the report ID is 0 for feature reports
-        const reportId = 0;
-        const inputReport = await device.receiveFeatureReport(reportId);
-        console.log("Received data:", inputReport.data);
-    } catch (error) {
-        console.error("Error receiving data:", error);
-    }
+function setMessage(message) {
+  document.getElementById('message').textContent = message;
 }
 
-async function startHIDCommunication() {
-    try {
-        const device = await navigator.hid.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] });
+function setDeviceInfo(deviceInfo) {
+  document.getElementById('deviceInfo').textContent = deviceInfo;
+}
 
-        // Example: Command to activate a specific feature on the portal
-        const commandData = [0x01, 0x02, 0x03]; // Example command data
-        await sendCommand(device, commandData);
-
-        // Receive and print response data
-        await receiveData(device);
-    } catch (error) {
-        console.error("Error:", error);
-    }
+function checkDevice() {
+  navigator.usb.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] })
+    .then(device => {
+      console.log('Device found:', device);
+      setStatus('green');
+      setMessage('Status: Device found');
+      setDeviceInfo(JSON.stringify(device, null, 2));
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      setStatus('red');
+      setMessage('Status: Error occurred');
+    });
 }
 </script>
-
 </body>
 </html>
