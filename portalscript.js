@@ -21,7 +21,7 @@ async function sendCommand(input) {
   }
 }
 
-(async function() {
+async function connectToDevice() {
   try {
     connectedDevice = await navigator.usb.requestDevice({ filters: [{ vendorId: 0x1430, productId: 0x0150 }] });
     setStatus('green'); // Update UI
@@ -31,8 +31,12 @@ async function sendCommand(input) {
     setStatus('red'); // Update UI
     connectedDevice = null;
   }
-})();
+}
 
 function setStatus(color) {
   document.getElementById('status').style.backgroundColor = color;
+}
+
+function initiateConnectionCheck() {
+  connectToDevice();
 }
