@@ -60,7 +60,7 @@
 <div id="deviceInfo"></div>
 <button onclick="sendCommand()">Send Command</button>
 <script>
-let connectedDevice; 
+let connectedDevice;
 
 async function sendCommand(input) {
   if (!connectedDevice) {
@@ -76,7 +76,7 @@ async function sendCommand(input) {
       value: 0,
       index: 0
     }, input);
-    
+
     console.log('Command sent successfully:', result);
   } catch (error) {
     console.error('Error sending command:', error);
@@ -87,24 +87,30 @@ async function connectToDevice() {
   try {
     const devices = await navigator.usb.getDevices();
     if (devices.length > 0) {
-      // Iterate through connected devices to find the specific device
       for (let i = 0; i < devices.length; i++) {
         const d = devices[i];
-        if (d.vendorId === 0x1430 && d.productId === 0x0150) { // Replace with your vendor and product IDs
+        if (d.vendorId === 0x1430 && d.productId === 0x0150) {
           connectedDevice = d;
+          setStatus('green'); // Update UI
           console.log('Device connected:', connectedDevice);
-          return; // Exit the loop if the device is found
+          return;
         }
       }
       console.log('No matching device found');
       connectedDevice = null;
     } else {
       console.log('No device connected');
+      setStatus('red'); // Update UI
       connectedDevice = null;
     }
   } catch (error) {
     console.error('Error connecting to device:', error);
+    setStatus('red'); // Update UI
   }
+}
+
+function setStatus(color) {
+  document.getElementById('status').style.backgroundColor = color;
 }
 
 // Call connectToDevice function initially
@@ -112,6 +118,7 @@ connectToDevice();
 
 // Periodically check if the device is connected
 setInterval(connectToDevice, 1000); // Adjust interval as needed
+
 </script>
 </body>
 </html>
