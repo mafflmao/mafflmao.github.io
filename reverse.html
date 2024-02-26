@@ -85,8 +85,8 @@ button {
     <div id="parsed_values">
       <label id="parsed_year_code"></label>
       <label id="parsed_bools"></label>
-      <label id="parsed_binary"></label>
       <label id="parsed_deco_id"></label>
+      <label id="parsed_binary"></label>
     </div>
   </div>
 
@@ -127,13 +127,13 @@ button {
     function parseVariantID() {
       var variantId = document.getElementById("variant_id_input").value;
       
-      // Convert the variant ID to binary and ensure it's 16 digits
-      var binaryVariantId = parseInt(variantId, 10).toString(2).padStart(16, '0');
+      // Convert the variant ID to binary and ensure it's 32 digits
+      var binaryVariantId = parseInt(variantId, 10).toString(2).padStart(32, '0');
       
-      // Split the binary variant ID into 4 parts: year code, bools, 0000, and DecoID
+      // Split the binary variant ID into 4 parts: year code, bools, DecoID, and 0000
       var yearCode = parseInt(binaryVariantId.substring(0, 4), 2);
       var bools = binaryVariantId.substring(4, 8);
-      var decoId = parseInt(binaryVariantId.substring(12), 2);
+      var decoId = parseInt(binaryVariantId.substring(8, 16), 2);
       
       // Convert year code to text
       var yearText = convertYearCodeToText(yearCode);
