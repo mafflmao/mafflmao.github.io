@@ -125,37 +125,38 @@ button {
     };
 
     function parseVariantID() {
-      var variantId = document.getElementById("variant_id_input").value;
+  var variantId = document.getElementById("variant_id_input").value;
+  
+  // Convert the variant ID to binary and ensure it's 32 digits
+  var binaryVariantId = parseInt(variantId, 10).toString(2).padStart(32, '0');
+  
+  // Split the binary variant ID into 4 parts: year code, bools, DecoID, and 0000
+  var yearCode = parseInt(binaryVariantId.substring(0, 4), 2);
+  var bools = binaryVariantId.substring(4, 8);
+  var decoId = parseInt(binaryVariantId.substring(8, 13), 2); // Corrected to 13
+  var remaining = binaryVariantId.substring(13); // Remaining part after DecoID
       
-      // Convert the variant ID to binary and ensure it's 32 digits
-      var binaryVariantId = parseInt(variantId, 10).toString(2).padStart(32, '0');
-      
-      // Split the binary variant ID into 4 parts: year code, bools, DecoID, and 0000
-      var yearCode = parseInt(binaryVariantId.substring(0, 4), 2);
-      var bools = binaryVariantId.substring(4, 8);
-      var decoId = parseInt(binaryVariantId.substring(8, 16), 2);
-      
-      // Convert year code to text
-      var yearText = convertYearCodeToText(yearCode);
-      
-      // Convert DecoID to text
-      var decoIdText = decoIdMap[decoId];
-      
-      // Convert bools to individual boolean values
-      var repose = bools[0] === "1" ? "Yes" : "No";
-      var altDeco = bools[1] === "1" ? "Yes" : "No";
-      var lightcore = bools[2] === "1" ? "Yes" : "No";
-      var supercharger = bools[3] === "1" ? "Yes" : "No";
-      
-      // Display parsed values
-      document.getElementById("parsed_year_code").innerText = `Year Code: ${yearText}`;
-      document.getElementById("parsed_bools").innerHTML = `<span class="bool-text ${repose === "Yes" ? "true" : "false"}">Repose</span><br>
-                                                           <span class="bool-text ${altDeco === "Yes" ? "true" : "false"}">AltDeco</span><br>
-                                                           <span class="bool-text ${lightcore === "Yes" ? "true" : "false"}">Lightcore</span><br>
-                                                           <span class="bool-text ${supercharger === "Yes" ? "true" : "false"}">Supercharger</span>`;
-      document.getElementById("parsed_binary").innerText = `Binary: ${binaryVariantId}`;
-      document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdText})`;
-    }
+  // Convert year code to text
+  var yearText = convertYearCodeToText(yearCode);
+  
+  // Convert DecoID to text
+  var decoIdText = decoIdMap[decoId];
+  
+  // Convert bools to individual boolean values
+  var repose = bools[0] === "1" ? "Yes" : "No";
+  var altDeco = bools[1] === "1" ? "Yes" : "No";
+  var lightcore = bools[2] === "1" ? "Yes" : "No";
+  var supercharger = bools[3] === "1" ? "Yes" : "No";
+  
+  // Display parsed values
+  document.getElementById("parsed_year_code").innerText = `Year Code: ${yearText}`;
+  document.getElementById("parsed_bools").innerHTML = `<span class="bool-text ${repose === "Yes" ? "true" : "false"}">Repose</span><br>
+                                                       <span class="bool-text ${altDeco === "Yes" ? "true" : "false"}">AltDeco</span><br>
+                                                       <span class="bool-text ${lightcore === "Yes" ? "true" : "false"}">Lightcore</span><br>
+                                                       <span class="bool-text ${supercharger === "Yes" ? "true" : "false"}">Supercharger</span>`;
+  document.getElementById("parsed_binary").innerText = `Binary: ${binaryVariantId}`;
+  document.getElementById("parsed_deco_id").innerText = `DecoID: ${decoId} (${decoIdText})`;
+}
 
     function convertYearCodeToText(yearCode) {
       switch (yearCode) {
