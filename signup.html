@@ -5,94 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f2f2f2;
-        }
-
-        .container {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-        }
-
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            margin-top: 4px;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
+        /* Your CSS styles here */
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Sign Up</h2>
         <form id="signup-form">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Sign Up</button>
+            <!-- Your sign-up form here -->
         </form>
         <div id="message"></div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.4.1/firebase-app.js" type="module" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/9.4.1/firebase-analytics.js" type="module" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/9.4.1/firebase-auth.js" type="module" defer></script>
+    <!-- Firebase SDK scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.4.1/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.4.1/firebase-analytics.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.4.1/firebase-auth.js" defer></script>
+
+    <!-- Your custom JavaScript code -->
     <script>
-        // Your web app's Firebase configuration
+        // Your Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCewx7eOiwsGThMfPusBPD0wGc9J2wvobw",
-            authDomain: "skylandersuniremake.firebaseapp.com",
-            projectId: "skylandersuniremake",
-            storageBucket: "skylandersuniremake.appspot.com",
-            messagingSenderId: "820256509193",
-            appId: "1:820256509193:web:e398242dc1357ddb0497d8",
-            measurementId: "G-5WD4CXXWTC"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
         };
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const analytics = firebase.analytics();
 
+        // Your sign-up functionality
         document.getElementById('signup-form').addEventListener('submit', function(event) {
             event.preventDefault();
             var email = document.getElementById('email').value;
