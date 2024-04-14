@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGX Viewer</title>
+    <style>
+        #root {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        button {
+            margin: 10px;
+        }
+
+        #objectList {
+            width: 200px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        #varList {
+            width: 400px;
+        }
+
+        .label {
+            padding: 5px;
+        }
+
+        .entry {
+            width: 200px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <button id="loadButton">Load IGX File</button>
+        <button id="saveButton">Save Changes</button>
+        <div id="objectList"></div>
+        <div id="varList"></div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loadButton = document.getElementById("loadButton");
+            const saveButton = document.getElementById("saveButton");
+            const objectList = document.getElementById("objectList");
+            const varList = document.getElementById("varList");
+
+            let objects = [];
+            let currentObjectIndex = null;
+
+            loadButton.addEventListener("click", function () {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.igx';
+                fileInput.onchange = function (e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (event) {
+                            const xmlString = event.target.result;
+                            const parser = new DOMParser();
+                            const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                            objects = Array.from(xmlDoc.querySelectorAll("object"));
+                            renderObjectList();
+                        };
+                        reader.readAsText(file);
+                    }
+                };
+                fileInput.click();
+            });
+
+            function renderObjectList() {
+                objectList.innerHTML = "";
+                objects.forEach((obj, index) => {
+                    const objItem = document.createElement("div");
+                    objItem.classList.add("label");
+                    objItem.textContent = obj.getAttribute("refname");
+                    objItem.addEventListener("click", () => {
+                        currentObjectIndex = index;
+                        renderVars();
+                    });
+                    objectList.appendChild(objItem);
+                });
+            }
+
+            function renderVars() {
+                varList.innerHTML = "";
+                if (currentObjectIndex !== null) {
+                    const selectedObject = objects[currentObjectIndex];
+                    const vars = Array.from(selectedObject.querySelectorAll("var"));
+                    vars.forEach((varNode) => {
+                        const varLabel = document.createElement("div");
+                        varLabel.classList.add("label");
+                        varLabel.textContent = varNode.getAttribute("name") + ":";
+                        varList.appendChild(varLabel);
+
+                        const varEntry = document.createElement("input");
+                        varEntry.classList.add("entry");
+                        varEntry.setAttribute("type", "text");
+                        varEntry.value = varNode.getAttribute("value");
+                        varList.appendChild(varEntry);
+                    });
+                }
+            }
+
+            saveButton.addEventListener("click", function () {
+                if (objects.length === 0) {
+                    return;
+                }
+                const xmlString = '<igx>';
+                objects.forEach((obj) => {
+                    const objString = obj.outerHTML.replace(/\n/g, '\n\t');
+                    xmlString += `\n\t${objString}`;
+                });
+                xmlString += '\n</igx>';
+                // Code to save the XML string as an IGX file
+                const blob = new Blob([xmlString], { type: 'text/xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'output.igx';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                console.log("Changes saved successfully!");
+            });
+        });
+    </script>
+</body>
+</html>
