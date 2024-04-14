@@ -26,7 +26,7 @@
             margin: 10px;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #5293ab;
+            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
@@ -81,6 +81,7 @@
     <div id="root">
         <button id="loadButton">Load IGX File</button>
         <button id="saveButton">Save Changes</button>
+        <button id="downloadButton" style="display: none;">Download File</button>
         <div id="objectList"></div>
         <div id="varList"></div>
     </div>
@@ -88,11 +89,13 @@
         document.addEventListener("DOMContentLoaded", function () {
             const loadButton = document.getElementById("loadButton");
             const saveButton = document.getElementById("saveButton");
+            const downloadButton = document.getElementById("downloadButton");
             const objectList = document.getElementById("objectList");
             const varList = document.getElementById("varList");
 
             let objects = [];
             let currentObjectIndex = null;
+            let blobUrl = null;
 
             loadButton.addEventListener("click", function () {
                 const fileInput = document.createElement('input');
@@ -160,15 +163,16 @@
                 });
                 xmlString += '\n</igx>';
                 const blob = new Blob([xmlString], { type: 'text/xml' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.setAttribute('download', 'output.igx');
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+                blobUrl = window.URL.createObjectURL(blob);
+                downloadButton.style.display = 'block';
                 console.log("Changes saved successfully!");
+            });
+
+            downloadButton.addEventListener("click", function () {
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.setAttribute('target', '_blank');
+                a.click();
             });
         });
     </script>
