@@ -159,16 +159,19 @@
                     xmlString += `\n\t${objString}`;
                 });
                 xmlString += '\n</igx>';
-                // Code to save the XML string as an IGX file
                 const blob = new Blob([xmlString], { type: 'text/xml' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'output.igx';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                if (navigator.msSaveBlob) { // For IE and Edge
+                    navigator.msSaveBlob(blob, 'output.igx');
+                } else {
+                    const a = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = 'output.igx';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
                 console.log("Changes saved successfully!");
             });
         });
