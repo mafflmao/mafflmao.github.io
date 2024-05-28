@@ -241,6 +241,8 @@ button {
       "TreasureHunt2014": 29,
       "TreasureHunt2015": 30,
       "Mobile": 31,
+      "Autism2016": 32, // it was originally called "austism2016" but im changing it, sorry tfb lol
+      "TreasureHunt2016": 33,
     };
 
     const yearEntry = document.getElementById("year_entry");
@@ -265,7 +267,7 @@ button {
       const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
       const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
       // cant believe this took me like 2 weeks. FINALLY DECO IDS OVER 15!!!
-      const decoIdBinary = ('00000000' + decoId.toString(2)).slice(-8); // Ensure 8-digit binary for DecoID
+      const decoIdBinary = ('00000000' + decoId.toString(2)).slice(-8);
 
       const variantId = `${yearBinary}${boolBinary}${decoIdBinary}`;
       variantIdLabel.innerText = "Binary: " + variantId;
@@ -286,16 +288,16 @@ button {
     function applyTemplate(templateName) {
       switch (templateName) {
         case 'Template 1':
-          yearEntry.value = '1'; // Year Code 1
-          bool1Check.checked = false; // Repose
-          bool2Check.checked = true; // Alt deco
-          bool3Check.checked = true; // Lightcore
-          bool4Check.checked = false; // Supercharger
-          decoIdCombobox.value = 'AlternateDeco'; // Deco ID 1
-          generateVariantID(); // Generate the variant ID based on the template
+          yearEntry.value = '1';
+          bool1Check.checked = false;
+          bool2Check.checked = true;
+          bool3Check.checked = true;
+          bool4Check.checked = false;
+          decoIdCombobox.value = 'AlternateDeco';
+          generateVariantID();
           break;
         case 'Template 2':
-          yearEntry.value = '1'; // Year Code 1
+          yearEntry.value = '1';
           bool1Check.checked = true;
           bool2Check.checked = false;
           bool3Check.checked = false;
@@ -304,7 +306,7 @@ button {
           generateVariantID();
         break;
         case 'Template 3':
-          yearEntry.value = '2'; // Year Code 1
+          yearEntry.value = '2';
           bool1Check.checked = true;
           bool2Check.checked = false;
           bool3Check.checked = false;
@@ -313,7 +315,7 @@ button {
           generateVariantID();
         break;
         case 'Template 4':
-          yearEntry.value = '3'; // Year Code 1
+          yearEntry.value = '3';
           bool1Check.checked = true;
           bool2Check.checked = false;
           bool3Check.checked = false;
@@ -322,7 +324,7 @@ button {
           generateVariantID();
         break;
         case 'Template 5':
-          yearEntry.value = '4'; // Year Code 1
+          yearEntry.value = '4';
           bool1Check.checked = true;
           bool2Check.checked = false;
           bool3Check.checked = false;
