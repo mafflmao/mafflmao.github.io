@@ -71,6 +71,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     fileContent = new Uint8Array(e.target.result);
+                    alert('File loaded successfully!');
                 };
                 reader.readAsArrayBuffer(file);
                 errorMessage.style.display = 'none';
@@ -84,6 +85,7 @@
                 processFile(fileContent, false).then(decryptedData => {
                     output.textContent = bytesToHex(decryptedData);
                     isDecrypted.checked = true;
+                    alert('Decryption successful!');
                 });
             } else {
                 alert('File is either already decrypted or not loaded.');
@@ -95,6 +97,7 @@
                 processFile(fileContent, true).then(encryptedData => {
                     output.textContent = bytesToHex(encryptedData);
                     isDecrypted.checked = false;
+                    alert('Encryption successful!');
                 });
             } else {
                 alert('File is either already encrypted or not loaded.');
