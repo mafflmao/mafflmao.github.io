@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dump File Encryptor/Decryptor</title>
+    <title>Dump File Decryptor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,14 +43,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Dump File Encryptor/Decryptor</h1>
+        <h1>Dump File Decryptor</h1>
         <input type="file" id="fileInput" class="file-input" accept=".dump">
         <br>
-        <label for="isDecrypted">Is the file already decrypted?</label>
-        <input type="checkbox" id="isDecrypted">
         <div class="buttons">
             <button id="decryptButton">Decrypt</button>
-            <button id="encryptButton">Encrypt</button>
         </div>
         <div id="output"></div>
         <div id="errorMessage" class="error-message" style="display: none;">Please select a file.</div>
@@ -59,10 +56,8 @@
     <script>
         const fileInput = document.getElementById('fileInput');
         const decryptButton = document.getElementById('decryptButton');
-        const encryptButton = document.getElementById('encryptButton');
         const output = document.getElementById('output');
         const errorMessage = document.getElementById('errorMessage');
-        const isDecrypted = document.getElementById('isDecrypted');
         let fileContent;
 
         fileInput.addEventListener('change', (event) => {
@@ -71,36 +66,21 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     fileContent = new Uint8Array(e.target.result);
-                    alert('File loaded successfully!');
+                    errorMessage.style.display = 'none';
                 };
                 reader.readAsArrayBuffer(file);
-                errorMessage.style.display = 'none';
             } else {
                 errorMessage.style.display = 'block';
             }
         });
 
         decryptButton.addEventListener('click', () => {
-            if (fileContent && !isDecrypted.checked) {
-                processFile(fileContent, false).then(decryptedData => {
+            if (fileContent) {
+                processFile(fileContent).then(decryptedData => {
                     output.textContent = bytesToHex(decryptedData);
-                    isDecrypted.checked = true;
-                    alert('Decryption successful!');
                 });
             } else {
-                alert('File is either already decrypted or not loaded.');
-            }
-        });
-
-        encryptButton.addEventListener('click', () => {
-            if (fileContent && isDecrypted.checked) {
-                processFile(fileContent, true).then(encryptedData => {
-                    output.textContent = bytesToHex(encryptedData);
-                    isDecrypted.checked = false;
-                    alert('Encryption successful!');
-                });
-            } else {
-                alert('File is either already encrypted or not loaded.');
+                alert('Please select a file.');
             }
         });
 
@@ -108,7 +88,7 @@
             return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join(' ');
         }
 
-        async function processFile(data, encrypt) {
+        async function processFile(data) {
             const actikey = new Uint8Array([0x20, 0x43, 0x6F, 0x70, 0x79, 0x72, 0x69, 0x67, 0x68, 0x74, 0x20, 0x28, 0x43, 0x29, 0x20, 0x32, 0x30, 0x31, 0x30, 0x20, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x73, 0x69, 0x6F, 0x6E, 0x2E, 0x20, 0x41, 0x6C, 0x6C, 0x20, 0x52, 0x69, 0x67, 0x68, 0x74, 0x73, 0x20, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x65, 0x64, 0x2E, 0x20]);
             const keyInput = new Uint8Array(85);
             const processedData = new Uint8Array(1024);
@@ -123,8 +103,8 @@
                     keyInput[32] = h;
                     tempData = data.slice(h * 16, (h + 1) * 16);
                     const key = await crypto.subtle.digest('MD5', keyInput);
-                    const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-ECB' }, false, [encrypt ? 'encrypt' : 'decrypt']);
-                    const processedBlock = await crypto.subtle[encrypt ? 'encrypt' : 'decrypt']({ name: 'AES-ECB' }, cryptoKey, tempData);
+                    const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-ECB' }, false, ['decrypt']);
+                    const processedBlock = await crypto.subtle.decrypt({ name: 'AES-ECB' }, cryptoKey, tempData);
                     processedData.set(new Uint8Array(processedBlock), h * 16);
                 }
             }
