@@ -25,6 +25,16 @@
         .buttons button {
             margin: 5px;
         }
+        #output {
+            margin-top: 20px;
+            width: 80%;
+            height: 200px;
+            border: 1px solid #000;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: auto;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -38,15 +48,14 @@
             <button id="decryptButton">Decrypt</button>
             <button id="encryptButton">Encrypt</button>
         </div>
-        <br>
-        <a id="downloadLink" style="display: none;">Download</a>
+        <div id="output"></div>
     </div>
 
     <script>
         const fileInput = document.getElementById('fileInput');
         const decryptButton = document.getElementById('decryptButton');
         const encryptButton = document.getElementById('encryptButton');
-        const downloadLink = document.getElementById('downloadLink');
+        const output = document.getElementById('output');
         const isDecrypted = document.getElementById('isDecrypted');
         let fileContent;
 
@@ -64,7 +73,7 @@
         decryptButton.addEventListener('click', () => {
             if (fileContent && !isDecrypted.checked) {
                 processFile(fileContent, false).then(decryptedData => {
-                    createDownloadLink(decryptedData, 'decrypted_output.dump');
+                    output.textContent = bytesToHex(decryptedData);
                     isDecrypted.checked = true;
                 });
             } else {
@@ -75,7 +84,7 @@
         encryptButton.addEventListener('click', () => {
             if (fileContent && isDecrypted.checked) {
                 processFile(fileContent, true).then(encryptedData => {
-                    createDownloadLink(encryptedData, 'encrypted_output.dump');
+                    output.textContent = bytesToHex(encryptedData);
                     isDecrypted.checked = false;
                 });
             } else {
@@ -83,13 +92,8 @@
             }
         });
 
-        function createDownloadLink(data, fileName) {
-            const blob = new Blob([data], { type: 'application/octet-stream' });
-            const url = URL.createObjectURL(blob);
-            downloadLink.href = url;
-            downloadLink.download = fileName;
-            downloadLink.style.display = 'inline';
-            downloadLink.textContent = `Download ${fileName}`;
+        function bytesToHex(bytes) {
+            return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join(' ');
         }
 
         async function processFile(data, encrypt) {
