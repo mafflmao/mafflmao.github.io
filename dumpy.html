@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dump File Encrypt/Decrypt</title>
+    <title>Dump File Encryptor/Decryptor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,6 +35,10 @@
             overflow: auto;
             padding: 10px;
         }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +53,7 @@
             <button id="encryptButton">Encrypt</button>
         </div>
         <div id="output"></div>
+        <div id="errorMessage" class="error-message" style="display: none;">Please select a file.</div>
     </div>
 
     <script>
@@ -56,6 +61,7 @@
         const decryptButton = document.getElementById('decryptButton');
         const encryptButton = document.getElementById('encryptButton');
         const output = document.getElementById('output');
+        const errorMessage = document.getElementById('errorMessage');
         const isDecrypted = document.getElementById('isDecrypted');
         let fileContent;
 
@@ -67,6 +73,9 @@
                     fileContent = new Uint8Array(e.target.result);
                 };
                 reader.readAsArrayBuffer(file);
+                errorMessage.style.display = 'none';
+            } else {
+                errorMessage.style.display = 'block';
             }
         });
 
