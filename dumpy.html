@@ -42,7 +42,6 @@
         <a id="downloadLink" style="display: none;">Download</a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js"></script>
     <script>
         const fileInput = document.getElementById('fileInput');
         const decryptButton = document.getElementById('decryptButton');
@@ -64,9 +63,10 @@
 
         decryptButton.addEventListener('click', () => {
             if (fileContent && !isDecrypted.checked) {
-                const decryptedData = decryptSkylander(fileContent);
-                createDownloadLink(decryptedData, 'decrypted_output.dump');
-                isDecrypted.checked = true;
+                processFile(fileContent, false).then(decryptedData => {
+                    createDownloadLink(decryptedData, 'decrypted_output.dump');
+                    isDecrypted.checked = true;
+                });
             } else {
                 alert('File is either already decrypted or not loaded.');
             }
@@ -74,9 +74,10 @@
 
         encryptButton.addEventListener('click', () => {
             if (fileContent && isDecrypted.checked) {
-                const encryptedData = encryptSkylander(fileContent);
-                createDownloadLink(encryptedData, 'encrypted_output.dump');
-                isDecrypted.checked = false;
+                processFile(fileContent, true).then(encryptedData => {
+                    createDownloadLink(encryptedData, 'encrypted_output.dump');
+                    isDecrypted.checked = false;
+                });
             } else {
                 alert('File is either already encrypted or not loaded.');
             }
@@ -91,85 +92,29 @@
             downloadLink.textContent = `Download ${fileName}`;
         }
 
-        function decryptSkylander(data) {
+        async function processFile(data, encrypt) {
             const actikey = new Uint8Array([0x20, 0x43, 0x6F, 0x70, 0x79, 0x72, 0x69, 0x67, 0x68, 0x74, 0x20, 0x28, 0x43, 0x29, 0x20, 0x32, 0x30, 0x31, 0x30, 0x20, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x73, 0x69, 0x6F, 0x6E, 0x2E, 0x20, 0x41, 0x6C, 0x6C, 0x20, 0x52, 0x69, 0x67, 0x68, 0x74, 0x73, 0x20, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x65, 0x64, 0x2E, 0x20]);
             const keyInput = new Uint8Array(85);
-            const decSky = new Uint8Array(1024);
-            let encData = new Uint8Array(16);
-            let decData = new Uint8Array(16);
-            let key = new Uint8Array(16);
-
-            let h = 0;
+            const processedData = new Uint8Array(1024);
+            let tempData = new Uint8Array(16);
             keyInput.set(data.slice(0, 32), 0);
             keyInput.set(actikey, 33);
 
-            while (h <= 63) {
+            for (let h = 0; h <= 63; h++) {
                 if ((h - 3) % 4 === 0 || h < 8 || h === 34 || h === 62) {
-                    decSky.set(data.slice(h * 16, (h + 1) * 16), h * 16);
+                    processedData.set(data.slice(h * 16, (h + 1) * 16), h * 16);
                 } else {
                     keyInput[32] = h;
-                    encData = data.slice(h * 16, (h + 1) * 16);
-                    key = calculateMd5Hash(keyInput);
-                    decData = aesDecrypt(encData, key);
-                    decSky.set(decData, h * 16);
+                    tempData = data.slice(h * 16, (h + 1) * 16);
+                    const key = await crypto.subtle.digest('MD5', keyInput);
+                    const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-ECB' }, false, [encrypt ? 'encrypt' : 'decrypt']);
+                    const processedBlock = await crypto.subtle[encrypt ? 'encrypt' : 'decrypt']({ name: 'AES-ECB' }, cryptoKey, tempData);
+                    processedData.set(new Uint8Array(processedBlock), h * 16);
                 }
-                h += 1;
             }
 
-            return decSky;
+            return processedData;
         }
-
-        function encryptSkylander(data) {
-            const actikey = new Uint8Array([0x20, 0x43, 0x6F, 0x70, 0x79, 0x72, 0x69, 0x67, 0x68, 0x74, 0x20, 0x28, 0x43, 0x29, 0x20, 0x32, 0x30, 0x31, 0x30, 0x20, 0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x73, 0x69, 0x6F, 0x6E, 0x2E, 0x20, 0x41, 0x6C, 0x6C, 0x20, 0x52, 0x69, 0x67, 0x68, 0x74, 0x73, 0x20, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x65, 0x64, 0x2E, 0x20]);
-            const keyInput = new Uint8Array(85);
-            const encSky = new Uint8Array(1024);
-            let encData = new Uint8Array(16);
-            let decData = new Uint8Array(16);
-            let key = new Uint8Array(16);
-
-            let h = 0;
-            keyInput.set(data.slice(0, 32), 0);
-            keyInput.set(actikey, 33);
-
-            while (h <= 63) {
-                if ((h - 3) % 4 === 0 || h < 8 || h === 34 || h === 62) {
-                    encSky.set(data.slice(h * 16, (h + 1) * 16), h * 16);
-                } else {
-                    keyInput[32] = h;
-                    decData = data.slice(h * 16, (h + 1) * 16);
-                    key = calculateMd5Hash(keyInput);
-                    encData = aesEncrypt(decData, key);
-                    encSky.set(encData, h * 16);
-                }
-                h += 1;
-            }
-
-            return encSky;
-        }
-
-        function calculateMd5Hash(input) {
-            return CryptoJS.MD5(CryptoJS.lib.WordArray.create(input)).toString(CryptoJS.enc.Hex);
-        }
-
-        function aesDecrypt(input, key) {
-            const keyHex = CryptoJS.enc.Hex.parse(key);
-            const inputHex = CryptoJS.enc.Hex.parse(CryptoJS.lib.WordArray.create(input).toString());
-            const decrypted = CryptoJS.AES.decrypt({ ciphertext: inputHex }, keyHex, {
-                mode: CryptoJS.mode.ECB,
-                padding: CryptoJS.pad.NoPadding
-            });
-            return decrypted.toString(CryptoJS.enc.Hex);
-        }
-
-        function aesEncrypt(input, key) {
-            const keyHex = CryptoJS.enc.Hex.parse(key);
-            const inputHex = CryptoJS.enc.Hex.parse(CryptoJS.lib.WordArray.create(input).toString());
-            const encrypted = CryptoJS.AES.encrypt(inputHex, keyHex, {
-                mode: CryptoJS.mode.ECB,
-                padding: CryptoJS.pad.NoPadding
-            });
-            return encrypted.ciphertext.toString(CryptoJS.enc.Hex);
-        }
-</script>
+    </script>
 </body>
 </html>
