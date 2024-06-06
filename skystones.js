@@ -3,30 +3,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const botHand = document.querySelector('.bot-hand');
     const board = document.querySelector('.board');
 
+    let selectedCard = null;
+
     playerHand.addEventListener('click', event => {
         if (event.target.classList.contains('card')) {
-            const card = event.target;
-            placeCard(card, 'player');
+            selectedCard = event.target;
         }
     });
 
-    function placeCard(card, type) {
-        const availableSpaces = [...document.querySelectorAll(`.${type}-space`)].filter(space => !space.hasChildNodes());
-        if (availableSpaces.length > 0) {
-            const space = availableSpaces[0];
-            space.appendChild(card.cloneNode(true));
-            card.remove();
-            if (type === 'player') {
-                botTurn();
-            }
+    board.addEventListener('click', event => {
+        if (selectedCard && event.target.classList.contains('player-space') && !event.target.hasChildNodes()) {
+            placeCard(selectedCard, event.target);
+            selectedCard = null;
+            botTurn();
         }
+    });
+
+    function placeCard(card, space) {
+        space.appendChild(card.cloneNode(true));
+        card.remove();
     }
 
     function botTurn() {
         const botCards = [...botHand.children];
-        if (botCards.length > 0) {
-            const botCard = botCards[0];
-            placeCard(botCard, 'bot');
+        const availableSpaces = [...document.querySelectorAll('.bot-space')].filter(space => !space.hasChildNodes());
+
+        if (botCards.length > 0 && availableSpaces.length > 0) {
+            const botCard = botCards[Math.floor(Math.random() * botCards.length)];
+            const space = availableSpaces[Math.floor(Math.random() * availableSpaces.length)];
+
+            placeCard(botCard, space);
             checkBattle();
         }
     }
