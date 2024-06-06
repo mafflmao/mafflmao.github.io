@@ -12,6 +12,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-image: url('gameboard.png');
+    background-size: cover;
+    padding: 20px;
+    border: 2px solid #000;
 }
 
 .player-hand, .bot-hand {
@@ -24,6 +28,9 @@ body {
     grid-template-columns: repeat(2, 100px);
     grid-gap: 10px;
     margin: 20px 0;
+    background-color: #a0522d;
+    padding: 20px;
+    border: 2px solid #000;
 }
 
 .player-space, .bot-space {
@@ -46,12 +53,6 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-}
-
-.card[data-type="player"] {
-    background-color: #aaf;
-}
-
-.card[data-type="bot"] {
-    background-color: #faa;
+    background-size: cover;
+    background-position: center;
 }
