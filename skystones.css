@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+.game-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-hand, .bot-hand {
+    display: flex;
+    margin: 10px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(2, 100px);
+    grid-gap: 10px;
+    margin: 20px 0;
+}
+
+.player-space, .bot-space {
+    width: 100px;
+    height: 150px;
+    border: 2px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+}
+
+.card {
+    width: 80px;
+    height: 130px;
+    border: 2px solid #000;
+    background-color: #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.card[data-type="player"] {
+    background-color: #aaf;
+}
+
+.card[data-type="bot"] {
+    background-color: #faa;
+}
