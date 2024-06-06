@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skystones Smash Game</title>
+    <link rel="stylesheet" href="skystones.css">
+</head>
+<body>
+    <div class="game-board">
+        <div class="player-hand">
+            <div class="card" data-attack="4" data-health="3" data-type="player"></div>
+            <div class="card" data-attack="3" data-health="3" data-type="player"></div>
+            <div class="card" data-attack="2" data-health="1" data-type="player"></div>
+        </div>
+        <div class="board">
+            <div class="player-space" data-position="1"></div>
+            <div class="bot-space" data-position="2"></div>
+            <div class="player-space" data-position="3"></div>
+            <div class="bot-space" data-position="4"></div>
+            <div class="player-space" data-position="5"></div>
+            <div class="bot-space" data-position="6"></div>
+        </div>
+        <div class="bot-hand">
+            <!-- Bot cards are hidden -->
+        </div>
+    </div>
+    <script src="skystones.js"></script>
+</body>
+</html>
