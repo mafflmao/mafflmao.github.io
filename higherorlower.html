@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Higher or Lower Card Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #ff0066, #6600ff);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+        }
+        .card {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+        .button {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .message {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" id="current-card">?</div>
+        <div class="buttons">
+            <button class="button" onclick="makeGuess('lower')">&larr; Lower</button>
+            <button class="button" onclick="makeGuess('higher')">Higher &rarr;</button>
+        </div>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const suits = ['♠️', '♥️', '♣️', '♦️', '🃏'];
+        const cards = [
+            '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace', 'Joker'
+        ];
+        const deck = [];
+
+        for (let suit of suits) {
+            for (let card of cards) {
+                if (card === 'Joker' && suit !== '🃏') continue;
+                deck.push(`${card} ${suit}`);
+            }
+        }
+
+        const valueMap = {
+            '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
+            'Jack': 11, 'Queen': 12, 'King': 13, 'Ace': 1, 'Joker': 14
+        };
+
+        let currentCard = null;
+        let currentCardValue = null;
+        let streak = 0;
+
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+
+        function startGame() {
+            shuffleDeck();
+            currentCard = deck.pop();
+            currentCardValue = getCardValue(currentCard);
+            document.getElementById('current-card').innerText = currentCard;
+            document.getElementById('message').innerText = '';
+            streak = 0;
+        }
+
+        function getCardValue(card) {
+            return valueMap[card.split(' ')[0]];
+        }
+
+        function makeGuess(guess) {
+            if (!currentCard) {
+                document.getElementById('message').innerText = 'Please start a game first!';
+                return;
+            }
+
+            if (deck.length === 0) {
+                document.getElementById('message').innerText = 'No more cards left in the deck!';
+                return;
+            }
+
+            const nextCard = deck.pop();
+            const nextCardValue = getCardValue(nextCard);
+
+            if (currentCardValue === nextCardValue) {
+                document.getElementById('message').innerText = `Nothing for a pair in this game! Game Over. The next card was ${nextCard}`;
+                currentCard = null;
+                return;
+            }
+
+            if ((guess === 'higher' && nextCardValue > currentCardValue) || (guess === 'lower' && nextCardValue < currentCardValue)) {
+                streak++;
+                let message = `Correct! The next card was ${nextCard}.`;
+                if (streak > 10) {
+                    message += ` Congratulations! You have a winning streak of ${streak}!`;
+                }
+                document.getElementById('message').innerText = message;
+            } else {
+                document.getElementById('message').innerText = `Wrong! The next card was ${nextCard}. Game over.`;
+                streak = 0;
+                currentCard = null;
+                return;
+            }
+
+            if (deck.length === 0) {
+                document.getElementById('message').innerText += ' No more cards left in the deck!';
+            }
+
+            currentCard = nextCard;
+            currentCardValue = nextCardValue;
+            document.getElementById('current-card').innerText = currentCard;
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
