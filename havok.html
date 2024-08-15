@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>animation index finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #09f;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        #outputList {
+            margin-top: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>animation index finder</h1>
+    <input type="file" id="fileInput" accept=".hka">
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <span>loading...</span>
+    </div>
+
+    <ul id="outputList"></ul>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            const loader = document.getElementById('loader');
+            const outputList = document.getElementById('outputList');
+
+            // Show loader
+            loader.style.display = 'block';
+            outputList.innerHTML = '';
+
+            reader.onload = function(e) {
+                const arrayBuffer = e.target.result;
+                const textDecoder = new TextDecoder();
+                const text = textDecoder.decode(arrayBuffer);
+
+                // Find the position of 'animTable'
+                const animTablePos = text.indexOf('animTable');
+                if (animTablePos === -1) {
+                    alert('animTable not found in the file.');
+                    loader.style.display = 'none';
+                    return;
+                }
+
+                // Slice the text starting from 'animTable'
+                const slicedText = text.slice(animTablePos + 'animTable'.length);
+
+                // Split by multiple 00 bytes (represented as \u0000 in JavaScript)
+                const words = slicedText.split(/\u0000+/);
+
+                // Iterate through the words and list them until the string "2" is found
+                let index = 0;
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i].trim();
+                    if (word === '2') break;
+                    if (word) {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${index}: ${word}`;
+                        outputList.appendChild(listItem);
+                        index++;
+                    }
+                }
+
+                // Hide loader when done
+                loader.style.display = 'none';
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+</html>
