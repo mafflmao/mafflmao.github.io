@@ -42,14 +42,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>Connect to Bluetooth Device</h1>
+        <h1>Connect to Bluetooth Portal v2</h1>
         <button id="connectButton">Connect to Device</button>
         <div id="status"></div>
     </div>
     <script>
         const connectButton = document.getElementById('connectButton');
         const statusDiv = document.getElementById('status');
-        const DEVICE_UUID = '533E1530-3ABE-F33F-CD00-594E8B0A8EA3';
+        const DEVICE_UUID = '533e1530-3abe-f33f-cd00-594e8b0a8ea3'; // lowercase
 
         connectButton.addEventListener('click', async () => {
             try {
