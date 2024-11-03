@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creation Crystal Variant ID Generator</title>
+  <title>Vessel Variant ID Generator</title>
   <style>
        body {
   background-color: #f5f5f5;
@@ -157,8 +157,7 @@ button {
 </head>
 <body>
   <div class="container">
-    <div id="header">Creation Crystal Variant ID Generator</div>
-    
+    <div id="header">Vessel Variant ID Generator for Skylanders</div>
     <label for="year_entry">Year Code:</label>
     <select id="year_entry">
       <option value="0">Spyro's Adventure : 0</option>
@@ -189,7 +188,25 @@ button {
     <br>
     <label id="binary_values_label"></label>
     <div id="footer">
-      This wouldn’t have been possible without <a href="https://github.com/NefariousTechSupport/Runes" target="_blank">Runes by NefariousTechSupport</a>.
+      This wouldn’t have been possible without <a href="https://github.com/NefariousTechSupport/Runes/blob/master/Docs/SkylanderFormat.md#sub-type" target="_blank">Runes by NefariousTechSupport</a>.
+    </div>
+
+    <!-- Variant ID Templates section -->
+    <div id="templates">
+      <h2>Variant ID Templates</h2>
+      <button onclick="applyTemplate('Template 1')">Lightcore Punch Pop Fizz</button>
+    </div>
+    <div id="giantstemplates">
+      <button onclick="applyTemplate('Template 2')">Series 2</button>
+    </div>
+    <div id="swaptemplates">
+      <button onclick="applyTemplate('Template 3')">Series 3</button>
+    </div>
+    <div id="traptemplates">
+      <button onclick="applyTemplate('Template 4')">Series 4</button>
+    </div>
+    <div id="chargertemplates">
+      <button onclick="applyTemplate('Template 5')">Series 5</button>
     </div>
   </div>
 
@@ -225,7 +242,7 @@ button {
       "TreasureHunt2014": 29,
       "TreasureHunt2015": 30,
       "Mobile": 31,
-      "Autism2016": 32,
+      "Autism2016": 32, // it was originally called "austism2016" but im changing it, sorry tfb lol
       "TreasureHunt2016": 33,
     };
 
@@ -239,30 +256,27 @@ button {
     const binaryValuesLabel = document.getElementById("binary_values_label");
 
     function generateVariantID() {
-  const yearCode = parseInt(yearEntry.value);
-  const bool1 = bool1Check.checked ? 1 : 0;
-  const bool2 = bool2Check.checked ? 1 : 0;
-  const bool3 = bool3Check.checked ? 1 : 0;
-  const bool4 = bool4Check.checked ? 1 : 0;
-  const selectedDecoIdName = decoIdCombobox.value;
-  const decoId = decoIdMap[selectedDecoIdName];
+      const yearCode = parseInt(yearEntry.value);
+      const bool1 = bool1Check.checked ? 1 : 0;
+      const bool2 = bool2Check.checked ? 1 : 0;
+      const bool3 = bool3Check.checked ? 1 : 0;
+      const bool4 = bool4Check.checked ? 1 : 0;
+      const selectedDecoIdName = decoIdCombobox.value;
+      
+      const decoId = decoIdMap[selectedDecoIdName];
 
-  // Generate each section in binary
-  const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
-  const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
-  
-  // Generate decoIdBinary and ensure last bit is '1'
-  let decoIdBinary = ('0000000' + decoId.toString(2)).slice(-7) + '1';
+      const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
+      const boolBinary = ${bool1}${bool2}${bool3}${bool4};
+      // cant believe this took me like 2 weeks. FINALLY DECO IDS OVER 15!!!
+      const decoIdBinary = ('00010000' + decoId.toString(2)).slice(-8);
 
-  // Combine sections
-  const variantId = `${yearBinary}${boolBinary}${decoIdBinary}`;
-  variantIdLabel.innerText = "Binary: " + variantId;
+      const variantId = ${yearBinary}${boolBinary}${decoIdBinary};
+      variantIdLabel.innerText = "Binary: " + variantId;
 
-  // Convert to decimal
-  const combinedDecimal = parseInt(variantId, 2);
-  binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
-}
-
+      const combinedBinary = yearBinary + boolBinary + decoIdBinary;
+      const combinedDecimal = parseInt(combinedBinary, 2);
+      binaryValuesLabel.innerText = Variant ID: ${combinedDecimal};
+    }
 
     // Populate DecoID combobox
     Object.keys(decoIdMap).forEach(function(key) {
@@ -270,6 +284,16 @@ button {
       option.text = key;
       decoIdCombobox.add(option);
     });
+
+    // Function to apply Variant ID templates
+    function applyTemplate(templateName) {
+      switch (templateName) {
+        
+        break;
+        default:
+          break;
+      }
+    }
   </script>
 </body>
 </html>
