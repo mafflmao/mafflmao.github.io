@@ -160,11 +160,6 @@ button {
     <div id="header">Vessel Variant ID Generator for Skylanders</div>
     <label for="year_entry">Year Code:</label>
     <select id="year_entry">
-      <option value="0">Spyro's Adventure : 0</option>
-      <option value="1">Giants : 1</option>
-      <option value="2">Swap Force : 2</option>
-      <option value="3">Trap Team : 3</option>
-      <option value="4">Superchargers : 4</option>
       <option value="5">Imaginators : 5</option>
       <option value="6">Skylanders2017 : 6</option>
     </select>
@@ -194,19 +189,7 @@ button {
     <!-- Variant ID Templates section -->
     <div id="templates">
       <h2>Variant ID Templates</h2>
-      <button onclick="applyTemplate('Template 1')">Lightcore Punch Pop Fizz</button>
-    </div>
-    <div id="giantstemplates">
-      <button onclick="applyTemplate('Template 2')">Series 2</button>
-    </div>
-    <div id="swaptemplates">
-      <button onclick="applyTemplate('Template 3')">Series 3</button>
-    </div>
-    <div id="traptemplates">
-      <button onclick="applyTemplate('Template 4')">Series 4</button>
-    </div>
-    <div id="chargertemplates">
-      <button onclick="applyTemplate('Template 5')">Series 5</button>
+      <button onclick="applyTemplate('Template 1')">Unused Crystal</button>
     </div>
   </div>
 
@@ -291,50 +274,14 @@ button {
     function applyTemplate(templateName) {
       switch (templateName) {
         case 'Template 1':
-          yearEntry.value = '1';
+          yearEntry.value = '5';
           bool1Check.checked = false;
-          bool2Check.checked = true;
+          bool2Check.checked = false;
           bool3Check.checked = true;
           bool4Check.checked = false;
-          decoIdCombobox.value = 'AlternateDeco';
+          decoIdCombobox.value = 'Unused';
           generateVariantID();
           break;
-        case 'Template 2':
-          yearEntry.value = '1';
-          bool1Check.checked = true;
-          bool2Check.checked = false;
-          bool3Check.checked = false;
-          bool4Check.checked = false;
-          decoIdCombobox.value = 'Repose1';
-          generateVariantID();
-        break;
-        case 'Template 3':
-          yearEntry.value = '2';
-          bool1Check.checked = true;
-          bool2Check.checked = false;
-          bool3Check.checked = false;
-          bool4Check.checked = false;
-          decoIdCombobox.value = 'Repose2';
-          generateVariantID();
-        break;
-        case 'Template 4':
-          yearEntry.value = '3';
-          bool1Check.checked = true;
-          bool2Check.checked = false;
-          bool3Check.checked = false;
-          bool4Check.checked = false;
-          decoIdCombobox.value = 'Repose3';
-          generateVariantID();
-        break;
-        case 'Template 5':
-          yearEntry.value = '4';
-          bool1Check.checked = true;
-          bool2Check.checked = false;
-          bool3Check.checked = false;
-          bool4Check.checked = false;
-          decoIdCombobox.value = 'Repose4';
-          generateVariantID();
-        break;
         default:
           break;
       }
