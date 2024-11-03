@@ -152,7 +152,7 @@
 
       const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
       const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
-      const decoIdBinary = ('00010000' + decoId.toString(2)).slice(-8);
+      const decoIdBinary = ('00000000' + decoId.toString(2)).slice(-8);
 
       // Setting the last bit of the third section to 1
       const modifiedDecoIdBinary = decoIdBinary.slice(0, -1) + '1';
