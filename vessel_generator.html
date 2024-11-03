@@ -239,25 +239,30 @@ button {
     const binaryValuesLabel = document.getElementById("binary_values_label");
 
     function generateVariantID() {
-      const yearCode = parseInt(yearEntry.value);
-      const bool1 = bool1Check.checked ? 1 : 0;
-      const bool2 = bool2Check.checked ? 1 : 0;
-      const bool3 = bool3Check.checked ? 1 : 0;
-      const bool4 = bool4Check.checked ? 1 : 0;
-      const selectedDecoIdName = decoIdCombobox.value;
-      const decoId = decoIdMap[selectedDecoIdName];
+  const yearCode = parseInt(yearEntry.value);
+  const bool1 = bool1Check.checked ? 1 : 0;
+  const bool2 = bool2Check.checked ? 1 : 0;
+  const bool3 = bool3Check.checked ? 1 : 0;
+  const bool4 = bool4Check.checked ? 1 : 0;
+  const selectedDecoIdName = decoIdCombobox.value;
+  const decoId = decoIdMap[selectedDecoIdName];
 
-      const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
-      const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
-      const decoIdBinary = ('00010000' + decoId.toString(2)).slice(-8);
+  // Generate each section in binary
+  const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
+  const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
+  let decoIdBinary = ('00000000' + decoId.toString(2)).slice(-8);
 
-      const variantId = `${yearBinary}${boolBinary}${decoIdBinary}`;
-      variantIdLabel.innerText = "Binary: " + variantId;
+  // Set the last bit of decoIdBinary to 1
+  decoIdBinary = decoIdBinary.slice(0, -1) + '1';
 
-      const combinedBinary = yearBinary + boolBinary + decoIdBinary;
-      const combinedDecimal = parseInt(combinedBinary, 2);
-      binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
-    }
+  // Combine sections
+  const variantId = `${yearBinary}${boolBinary}${decoIdBinary}`;
+  variantIdLabel.innerText = "Binary: " + variantId;
+
+  // Convert to decimal
+  const combinedDecimal = parseInt(variantId, 2);
+  binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
+}
 
     // Populate DecoID combobox
     Object.keys(decoIdMap).forEach(function(key) {
