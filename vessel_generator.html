@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vessel Variant ID Generator</title>
+  <title>Variant ID Generator</title>
   <style>
        body {
   background-color: #f5f5f5;
@@ -157,7 +157,7 @@ button {
 </head>
 <body>
   <div class="container">
-    <div id="header">Vessel Variant ID Generator for Skylanders</div>
+    <div id="header">Variant ID Generator for Skylanders</div>
     <label for="year_entry">Year Code:</label>
     <select id="year_entry">
       <option value="0">Spyro's Adventure : 0</option>
@@ -288,7 +288,50 @@ button {
     // Function to apply Variant ID templates
     function applyTemplate(templateName) {
       switch (templateName) {
-        
+        case 'Template 1':
+          yearEntry.value = '1';
+          bool1Check.checked = false;
+          bool2Check.checked = true;
+          bool3Check.checked = true;
+          bool4Check.checked = false;
+          decoIdCombobox.value = 'AlternateDeco';
+          generateVariantID();
+          break;
+        case 'Template 2':
+          yearEntry.value = '1';
+          bool1Check.checked = true;
+          bool2Check.checked = false;
+          bool3Check.checked = false;
+          bool4Check.checked = false;
+          decoIdCombobox.value = 'Repose1';
+          generateVariantID();
+        break;
+        case 'Template 3':
+          yearEntry.value = '2';
+          bool1Check.checked = true;
+          bool2Check.checked = false;
+          bool3Check.checked = false;
+          bool4Check.checked = false;
+          decoIdCombobox.value = 'Repose2';
+          generateVariantID();
+        break;
+        case 'Template 4':
+          yearEntry.value = '3';
+          bool1Check.checked = true;
+          bool2Check.checked = false;
+          bool3Check.checked = false;
+          bool4Check.checked = false;
+          decoIdCombobox.value = 'Repose3';
+          generateVariantID();
+        break;
+        case 'Template 5':
+          yearEntry.value = '4';
+          bool1Check.checked = true;
+          bool2Check.checked = false;
+          bool3Check.checked = false;
+          bool4Check.checked = false;
+          decoIdCombobox.value = 'Repose4';
+          generateVariantID();
         break;
         default:
           break;
