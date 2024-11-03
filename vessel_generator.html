@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Variant ID Generator</title>
+  <title>Vessel Variant ID Generator</title>
   <style>
        body {
   background-color: #f5f5f5;
@@ -157,7 +157,7 @@ button {
 </head>
 <body>
   <div class="container">
-    <div id="header">Variant ID Generator for Skylanders</div>
+    <div id="header">Vessel Variant ID Generator for Skylanders</div>
     <label for="year_entry">Year Code:</label>
     <select id="year_entry">
       <option value="0">Spyro's Adventure : 0</option>
@@ -212,39 +212,41 @@ button {
 
   <script>
     const decoIdMap = {
-      "Normal": 0,
-      "Repose1": 1,
-      "AlternateDeco": 2,
-      "Legendary": 3,
-      "Event": 4,
-      "Repose2": 5,
-      "LightDirect": 6,
-      "LightStored": 7,
-      "LightEnhanced": 8,
-      "Repose3": 9,
-      "Repose4": 10,
-      "Repose5": 11,
-      "Valentines": 12,
-      "Easter": 13,
-      "Winter": 14,
-      "Virtual": 15,
-      "Premium": 16,
-      "GlowDark": 17,
-      "StoneStatue": 18,
-      "GlitterSpectrum": 19,
-      "TreasureHunt2012": 20,
-      "Halloween": 21,
-      "TreasureHunt2013": 22,
-      "ColorShift": 23,
-      "WiiU": 24,
-      "TH_BestBuy": 25,
-      "TH_FritoLay": 26,
-      "TreasureHunt2014": 29,
-      "TreasureHunt2015": 30,
-      "Mobile": 31,
-      "Autism2016": 32, // it was originally called "austism2016" but im changing it, sorry tfb lol
-      "TreasureHunt2016": 33,
-    };
+  "Unused": 0,
+  "8j_Fire": 1,
+  "8k_Air": 2,
+  "8a_Light": 3,
+  "5h_Magic": 4,
+  "5a_Tech": 5,
+  "5e_Dark": 6,
+  "4b_Air": 7,
+  "4e_Magic": 8,
+  "4c_Undead": 9,
+  "9a_Dark": 10,
+  "9c_Light": 11,
+  "9b_Earth": 12,
+  "7c_Tech": 13,
+  "7b_Dark": 14,
+  "7d_Fire": 15,
+  "6d_Life": 16,
+  "6g_Fire": 17,
+  "6f_Air": 18,
+  "3k_Earth": 19,
+  "3f_Water": 20,
+  "3g_Tech": 21,
+  "2e_Light": 22,
+  "2d_Undead": 23,
+  "2h_Water": 24,
+  "lf_Undead": 25,
+  "lh_Life": 26,
+  "lj_Magic": 27,
+  "Og_Water": 28,
+  "0j_Earth": 29,
+  "0k_Life": 30,
+  "9e_Life": 31,
+  "Kaos": 32
+};
+
 
     const yearEntry = document.getElementById("year_entry");
     const bool1Check = document.getElementById("bool1_check");
