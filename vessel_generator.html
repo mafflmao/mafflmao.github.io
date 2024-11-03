@@ -266,16 +266,16 @@ button {
       const decoId = decoIdMap[selectedDecoIdName];
 
       const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
-      const boolBinary = ${bool1}${bool2}${bool3}${bool4};
+      const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
       // cant believe this took me like 2 weeks. FINALLY DECO IDS OVER 15!!!
-      const decoIdBinary = ('00010000' + decoId.toString(2)).slice(-8);
+      const decoIdBinary = ('00000000' + decoId.toString(2)).slice(-8);
 
-      const variantId = ${yearBinary}${boolBinary}${decoIdBinary};
+      const variantId = `${yearBinary}${boolBinary}${decoIdBinary}`;
       variantIdLabel.innerText = "Binary: " + variantId;
 
       const combinedBinary = yearBinary + boolBinary + decoIdBinary;
       const combinedDecimal = parseInt(combinedBinary, 2);
-      binaryValuesLabel.innerText = Variant ID: ${combinedDecimal};
+      binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
     }
 
     // Populate DecoID combobox
