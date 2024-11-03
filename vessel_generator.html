@@ -268,7 +268,7 @@ button {
       const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
       const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
       // cant believe this took me like 2 weeks. FINALLY DECO IDS OVER 15!!!
-      const decoIdBinary = ('00010000' + decoId.toString(2)).slice(-8);
+      const decoIdBinary = ('00001000' + decoId.toString(2)).slice(-8);
 
       const variantId = `${yearBinary}${boolBinary}${decoIdBinary}`;
       variantIdLabel.innerText = "Binary: " + variantId;
