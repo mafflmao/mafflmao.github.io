@@ -250,10 +250,9 @@ button {
   // Generate each section in binary
   const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
   const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
-  let decoIdBinary = ('00000000' + decoId.toString(2)).slice(-8);
-
-  // Set the last bit of decoIdBinary to 1
-  decoIdBinary = decoIdBinary.slice(0, -1) + '1';
+  
+  // Generate decoIdBinary and ensure last bit is '1'
+  let decoIdBinary = ('0000000' + decoId.toString(2)).slice(-7) + '1';
 
   // Combine sections
   const variantId = `${yearBinary}${boolBinary}${decoIdBinary}`;
@@ -263,6 +262,7 @@ button {
   const combinedDecimal = parseInt(variantId, 2);
   binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
 }
+
 
     // Populate DecoID combobox
     Object.keys(decoIdMap).forEach(function(key) {
