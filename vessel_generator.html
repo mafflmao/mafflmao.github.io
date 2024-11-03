@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creation Crystal Variant ID Generator</title>
+  <style>
+       body {
+          background-color: #f5f5f5;
+          font-family: 'Roboto', sans-serif;
+          margin: 0;
+      }
+
+      .container {
+          background-color: #fff;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          margin: auto;
+          padding: 20px;
+          max-width: 400px;
+      }
+
+      #header {
+          font-size: 24px;
+          margin-bottom: 20px;
+          color: #333;
+      }
+
+      label, button, select, input[type="checkbox"] {
+          display: inline-block;
+          margin-bottom: 10px;
+          padding: 10px;
+          border: none;
+          border-radius: 4px;
+          background-color: #007bff;
+          color: #fff;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+
+      button:hover {
+          background-color: #0056b3;
+      }
+
+      button {
+          width: 100%;
+      }
+
+      #variant_id_label, #binary_values_label {
+          margin-top: 10px;
+      }
+
+      #footer {
+          font-size: 12px;
+          margin-top: 20px;
+          color: #888;
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="header">Creation Crystal Variant ID Generator</div>
+    
+    <label for="year_entry">Year Code:</label>
+    <select id="year_entry">
+      <option value="0">Spyro's Adventure : 0</option>
+      <option value="1">Giants : 1</option>
+      <option value="2">Swap Force : 2</option>
+      <option value="3">Trap Team : 3</option>
+      <option value="4">Superchargers : 4</option>
+      <option value="5">Imaginators : 5</option>
+      <option value="6">Skylanders2017 : 6</option>
+    </select>
+    <br>
+    <input type="checkbox" id="bool1_check">
+    <label for="bool1_check">Repose?</label>
+    <input type="checkbox" id="bool2_check">
+    <label for="bool2_check">AltDeco?</label>
+    <br>
+    <input type="checkbox" id="bool3_check">
+    <label for="bool3_check">Lightcore?</label>
+    <input type="checkbox" id="bool4_check">
+    <label for="bool4_check">Supercharger?</label>
+    <br>
+    <label for="deco_id_combobox">DecoID:</label>
+    <select id="deco_id_combobox"></select>
+    <br>
+    <button onclick="generateVariantID()">Generate Variant ID</button>
+    <br>
+    <label id="variant_id_label"></label>
+    <br>
+    <label id="binary_values_label"></label>
+    <div id="footer">
+      This wouldn’t have been possible without <a href="https://github.com/NefariousTechSupport/Runes" target="_blank">Runes by NefariousTechSupport</a>.
+    </div>
+  </div>
+
+  <script>
+    const decoIdMap = {
+      "Normal": 0,
+      "Repose1": 1,
+      "AlternateDeco": 2,
+      "Legendary": 3,
+      "Event": 4,
+      "Repose2": 5,
+      "LightDirect": 6,
+      "LightStored": 7,
+      "LightEnhanced": 8,
+      "Repose3": 9,
+      "Repose4": 10,
+      "Repose5": 11,
+      "Valentines": 12,
+      "Easter": 13,
+      "Winter": 14,
+      "Virtual": 15,
+      "Premium": 16,
+      "GlowDark": 17,
+      "StoneStatue": 18,
+      "GlitterSpectrum": 19,
+      "TreasureHunt2012": 20,
+      "Halloween": 21,
+      "TreasureHunt2013": 22,
+      "ColorShift": 23,
+      "WiiU": 24,
+      "TH_BestBuy": 25,
+      "TH_FritoLay": 26,
+      "TreasureHunt2014": 29,
+      "TreasureHunt2015": 30,
+      "Mobile": 31,
+      "Autism2016": 32,
+      "TreasureHunt2016": 33,
+    };
+
+    const yearEntry = document.getElementById("year_entry");
+    const bool1Check = document.getElementById("bool1_check");
+    const bool2Check = document.getElementById("bool2_check");
+    const bool3Check = document.getElementById("bool3_check");
+    const bool4Check = document.getElementById("bool4_check");
+    const decoIdCombobox = document.getElementById("deco_id_combobox");
+    const variantIdLabel = document.getElementById("variant_id_label");
+    const binaryValuesLabel = document.getElementById("binary_values_label");
+
+    function generateVariantID() {
+      const yearCode = parseInt(yearEntry.value);
+      const bool1 = bool1Check.checked ? 1 : 0;
+      const bool2 = bool2Check.checked ? 1 : 0;
+      const bool3 = bool3Check.checked ? 1 : 0;
+      const bool4 = bool4Check.checked ? 1 : 0;
+      const selectedDecoIdName = decoIdCombobox.value;
+      const decoId = decoIdMap[selectedDecoIdName];
+
+      const yearBinary = ('0000' + yearCode.toString(2)).slice(-4);
+      const boolBinary = `${bool1}${bool2}${bool3}${bool4}`;
+      const decoIdBinary = ('00010000' + decoId.toString(2)).slice(-8);
+
+      // Setting the last bit of the third section to 1
+      const modifiedDecoIdBinary = decoIdBinary.slice(0, -1) + '1';
+
+      const variantId = `${yearBinary}${boolBinary}${modifiedDecoIdBinary}`;
+      variantIdLabel.innerText = "Binary: " + variantId;
+
+      const combinedBinary = yearBinary + boolBinary + modifiedDecoIdBinary;
+      const combinedDecimal = parseInt(combinedBinary, 2);
+      binaryValuesLabel.innerText = `Variant ID: ${combinedDecimal}`;
+    }
+
+    // Populate DecoID combobox
+    Object.keys(decoIdMap).forEach(function(key) {
+      const option = document.createElement("option");
+      option.text = key;
+      decoIdCombobox.add(option);
+    });
+  </script>
+</body>
+</html>
