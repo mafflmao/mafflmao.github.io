@@ -4,6 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bluetooth Communication</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #status {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+    #connectBtn {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #connectBtn:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
   <h1>Skylander Detection with Bluetooth</h1>
@@ -17,7 +39,8 @@
 
     let skylanderDetected = false;
     let device;
-
+    let writeCharacteristic;
+    
     // Function to request device and connect
     async function connectToDevice() {
       try {
@@ -35,7 +58,7 @@
 
         // Get the characteristics
         const readCharacteristic = await service.getCharacteristic(READ_UUID);
-        const writeCharacteristic = await service.getCharacteristic(WRITE_UUID);
+        writeCharacteristic = await service.getCharacteristic(WRITE_UUID);
 
         // Listen for notifications
         await readCharacteristic.startNotifications();
@@ -44,7 +67,7 @@
         document.getElementById('status').innerText = 'Listening for notifications...';
 
         // Start sending data periodically
-        sendColorData(writeCharacteristic);
+        sendColorData();
 
       } catch (error) {
         console.error('Connection failed', error);
@@ -69,8 +92,8 @@
       document.getElementById('status').innerText = skylanderDetected ? 'Skylander detected' : 'No Skylander detected';
     }
 
-    // Function to send color data
-    async function sendColorData(writeCharacteristic) {
+    // Function to send color data periodically
+    async function sendColorData() {
       try {
         const interval = setInterval(async () => {
           let r, g, b;
