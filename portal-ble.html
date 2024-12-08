@@ -1,123 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bluetooth Communication</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    #status {
-      font-size: 1.5em;
-      margin-top: 20px;
-    }
-    #connectBtn {
-      padding: 10px 20px;
-      font-size: 1em;
-      cursor: pointer;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-    #connectBtn:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bluetooth Device Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #deviceList {
+            margin-top: 20px;
+        }
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-  <h1>POPOOOO</h1>
-  <button id="connectBtn">CONNECT!!</button>
-  <div id="status"></div>
 
-  <script>
-    const SERVICE_UUID = '533e1530-3abe-f33f-cd00-594e8b0a8ea3';  // Use lowercase and proper UUID format
-    const READ_UUID = '533e1542-3abe-f33f-cd00-594e8b0a8ea3';
-    const WRITE_UUID = '533e1543-3abe-f33f-cd00-594e8b0a8ea3';
+    <h1>Bluetooth Device Finder</h1>
+    <button id="scanBtn">Scan for Devices</button>
+    <div id="deviceList"></div>
+    <div id="status"></div>
 
-    let skylanderDetected = false;
-    let device;
-    let writeCharacteristic;
-    
-    // Function to request device and connect
-    async function connectToDevice() {
-      try {
-        // Request Bluetooth device
-        device = await navigator.bluetooth.requestDevice({
-          filters: [{ services: [SERVICE_UUID] }]
-        });
+    <script>
+        let skylanderDetected = false;
+        let device;
+        let writeCharacteristic;
+        let readCharacteristic;
+        
+        const SERVICE_UUID = '533E1530-3ABE-F33F-CD00-594E8B0A8EA3';
+        const READ_UUID = '533E1542-3ABE-F33F-CD00-594E8B0A8EA3';
+        const WRITE_UUID = '533E1543-3ABE-F33F-CD00-594E8B0A8EA3';
 
-        // Connect to the selected device
-        const server = await device.gatt.connect();
-        console.log('Connected to', device.name);
+        // Function to scan for devices and display the list
+        async function scanForDevices() {
+            try {
+                // Request any Bluetooth device with any services
+                const devices = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,  // Accept any Bluetooth device
+                    optionalServices: []      // No specific service filter, so we'll list all
+                });
 
-        // Get the service
-        const service = await server.getPrimaryService(SERVICE_UUID);
+                // Clear previous device list and display new list
+                const deviceList = document.getElementById('deviceList');
+                deviceList.innerHTML = '';  // Clear previous devices
 
-        // Get the characteristics
-        const readCharacteristic = await service.getCharacteristic(READ_UUID);
-        writeCharacteristic = await service.getCharacteristic(WRITE_UUID);
+                // Create a button for the selected device
+                const deviceButton = document.createElement('button');
+                deviceButton.innerText = `Connect to ${devices.name || devices.id}`;
+                deviceButton.onclick = () => connectToDevice(devices);
+                deviceList.appendChild(deviceButton);
 
-        // Listen for notifications
-        await readCharacteristic.startNotifications();
-        readCharacteristic.addEventListener('characteristicvaluechanged', handleNotifications);
+                document.getElementById('status').innerText = 'Select a device to connect';
+            } catch (error) {
+                console.log('Error during scan:', error);
+                document.getElementById('status').innerText = `Scan failed: ${error}`;
+            }
+        }
 
-        document.getElementById('status').innerText = 'Listening for notifications...';
+        // Connect to the selected device and interact with its Bluetooth services
+        async function connectToDevice(selectedDevice) {
+            try {
+                device = await selectedDevice.gatt.connect();
+                console.log('Connected to:', device);
 
-        // Start sending data periodically
-        sendColorData();
+                // Get the service with the specific UUID
+                const service = await device.getPrimaryService(SERVICE_UUID);
+                
+                // Get the read and write characteristics
+                readCharacteristic = await service.getCharacteristic(READ_UUID);
+                writeCharacteristic = await service.getCharacteristic(WRITE_UUID);
 
-      } catch (error) {
-        console.error('Connection failed', error);
-        document.getElementById('status').innerText = 'Failed to connect';
-      }
-    }
+                // Start listening for notifications on the read characteristic
+                readCharacteristic.addEventListener('characteristicvaluechanged', handleNotification);
+                await readCharacteristic.startNotifications();
 
-    // Handle incoming notifications
-    function handleNotifications(event) {
-      const value = new DataView(event.target.value.buffer);
-      const statusByte = value.getUint8(0);  // First byte is the status
+                console.log('Listening for notifications...');
+                document.getElementById('status').innerText = 'Listening for notifications...';
 
-      if (statusByte > 0) {
-        console.log('Skylander detected');
-        skylanderDetected = true;
-      } else {
-        console.log('No Skylander detected');
-        skylanderDetected = false;
-      }
+                // Start sending data based on Skylander detection
+                sendColorData();
+            } catch (error) {
+                console.log('Error connecting to device:', error);
+                document.getElementById('status').innerText = `Connection failed: ${error}`;
+            }
+        }
 
-      // Display status
-      document.getElementById('status').innerText = skylanderDetected ? 'Skylander detected' : 'No Skylander detected';
-    }
+        // Handle notifications from the device's read characteristic
+        function handleNotification(event) {
+            const data = new TextDecoder().decode(event.target.value);
+            console.log('Received data:', data);
 
-    // Function to send color data periodically
-    async function sendColorData() {
-      try {
-        const interval = setInterval(async () => {
-          let r, g, b;
-          if (skylanderDetected) {
-            r = 0; g = 255; b = 0;  // Green if Skylander detected
-          } else {
-            r = 255; g = 0; b = 0;  // Red if no Skylander detected
-          }
+            if (data.startsWith('S')) {
+                const nextByte = data.charCodeAt(1);  // Assuming second byte is status
+                if (nextByte > 0) {
+                    console.log("Skylander detected on the portal");
+                    skylanderDetected = true;
+                } else {
+                    console.log("No Skylander on the portal");
+                    skylanderDetected = false;
+                }
+            } else if (data.startsWith('Q')) {
+                const skylanderId = new DataView(event.target.value.buffer).getUint16(3, true);
+                console.log("Skylander ID:", skylanderId);
+            } else {
+                console.log(`Unexpected notification data: ${data}`);
+            }
+        }
 
-          // Create the data packet
-          const data = new Uint8Array([0x43, r, g, b]);  // 'C' is 0x43 in ASCII
+        // Send color data (Red or Green) based on Skylander detection
+        async function sendColorData() {
+            try {
+                const data = new Uint8Array(4);
 
-          // Write data to the characteristic
-          await writeCharacteristic.writeValue(data);
-          console.log(`Data sent: C, ${r}, ${g}, ${b}`);
-        }, 500);  // Send data every 500ms
-      } catch (error) {
-        console.error('Failed to send data', error);
-      }
-    }
+                while (true) {
+                    if (skylanderDetected) {
+                        data[0] = 67;  // 'C' character in ASCII
+                        data[1] = 0;   // Green
+                        data[2] = 255; // Green
+                        data[3] = 0;   // Green
+                    } else {
+                        data[0] = 67;  // 'C' character in ASCII
+                        data[1] = 255; // Red
+                        data[2] = 0;   // Red
+                        data[3] = 0;   // Red
+                    }
 
-    // Event listener for the connect button
-    document.getElementById('connectBtn').addEventListener('click', connectToDevice);
+                    await writeCharacteristic.writeValue(data);
+                    console.log(`Sent color data: C, ${data[1]}, ${data[2]}, ${data[3]}`);
 
-  </script>
+                    // Wait before sending next data
+                    await new Promise(resolve => setTimeout(resolve, 500));  // Adjust delay for color updates
+                }
+            } catch (error) {
+                console.log('Error sending color data:', error);
+            }
+        }
+
+        // Start scanning when the page loads
+        document.getElementById('scanBtn').addEventListener('click', scanForDevices);
+    </script>
+
 </body>
 </html>
