@@ -1,137 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Object Maker</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-
-        #codeInput {
-            width: 90%;
-            height: 150px;
-            margin: 20px 0;
-            padding: 10px;
-            font-size: 16px;
-            font-family: monospace;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        #viewBox {
-            width: 90%;
-            height: 400px;
-            background-color: white;
-            border: 1px solid #ccc;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .object {
-            position: absolute;
-            background-color: #3498db;
-        }
-
-        .square {
-            width: 50px;
-            height: 50px;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bluetooth Communication</title>
 </head>
 <body>
+  <h1>Skylander Detection with Bluetooth</h1>
+  <button id="connectBtn">Connect to Skylander</button>
+  <div id="status"></div>
 
-    <textarea id="codeInput" placeholder="Enter your code here..."></textarea>
-    <button onclick="runCode()">Run Code</button>
-    <div id="viewBox"></div>
+  <script>
+    const SERVICE_UUID = '533E1530-3ABE-F33F-CD00-594E8B0A8EA3';
+    const READ_UUID = '533E1542-3ABE-F33F-CD00-594E8B0A8EA3';
+    const WRITE_UUID = '533E1543-3ABE-F33F-CD00-594E8B0A8EA3';
 
-    <script>
-        const objects = {};
+    let skylanderDetected = false;
+    let device;
 
-        function makeObject(type, name, position, scale) {
-            const element = document.createElement('div');
-            element.classList.add('object', type);
-            element.style.left = position[0] + 'px';
-            element.style.top = position[1] + 'px';
-            element.style.width = scale[0] + 'px';
-            element.style.height = scale[1] + 'px';
-            objects[name] = element;
-            document.getElementById('viewBox').appendChild(element);
-        }
+    // Function to request device and connect
+    async function connectToDevice() {
+      try {
+        // Request Bluetooth device
+        device = await navigator.bluetooth.requestDevice({
+          filters: [{ services: [SERVICE_UUID] }]
+        });
 
-        function setPosition(name, deltaPosition) {
-            const object = objects[name];
-            if (object) {
-                const currentLeft = parseFloat(object.style.left);
-                const currentTop = parseFloat(object.style.top);
-                object.style.left = (currentLeft + deltaPosition[0]) + 'px';
-                object.style.top = (currentTop + deltaPosition[1]) + 'px';
-            }
-        }
+        // Connect to the selected device
+        const server = await device.gatt.connect();
+        console.log('Connected to', device.name);
 
-        function setSize(name, deltaSize) {
-            const object = objects[name];
-            if (object) {
-                const currentWidth = parseFloat(object.style.width);
-                const currentHeight = parseFloat(object.style.height);
-                object.style.width = (currentWidth + deltaSize[0]) + 'px';
-                object.style.height = (currentHeight + deltaSize[1]) + 'px';
-            }
-        }
+        // Get the service
+        const service = await server.getPrimaryService(SERVICE_UUID);
 
-        function executeCommand(command) {
-            const parts = command.split('/');
-            const action = parts[0];
+        // Get the characteristics
+        const readCharacteristic = await service.getCharacteristic(READ_UUID);
+        const writeCharacteristic = await service.getCharacteristic(WRITE_UUID);
 
-            if (action === 'make') {
-                const objectType = parts[1].split(';')[1];
-                const name = parts[2].replace(/["']/g, '');
-                const position = parts[3].split(',').map(Number);
-                const scale = parts[4].split(',').map(Number);
-                makeObject(objectType, name, position, scale);
-            } else if (action === 'set-pos') {
-                const name = parts[1].replace(/["']/g, '');
-                const deltaPosition = parts[2].split(',').map(Number);
-                setPosition(name, deltaPosition);
-            } else if (action === 'set-size') {
-                const name = parts[1].replace(/["']/g, '');
-                const deltaSize = parts[2].split(',').map(Number);
-                setSize(name, deltaSize);
-            }
-        }
+        // Listen for notifications
+        await readCharacteristic.startNotifications();
+        readCharacteristic.addEventListener('characteristicvaluechanged', handleNotifications);
 
-        function runCode() {
-            const codeInput = document.getElementById('codeInput').value;
-            const commands = codeInput.split('\n');
-            document.getElementById('viewBox').innerHTML = '';
-            commands.forEach(command => {
-                if (command.trim() !== '') {
-                    executeCommand(command);
-                }
-            });
-        }
-    </script>
+        document.getElementById('status').innerText = 'Listening for notifications...';
+
+        // Start sending data periodically
+        sendColorData(writeCharacteristic);
+
+      } catch (error) {
+        console.error('Connection failed', error);
+        document.getElementById('status').innerText = 'Failed to connect';
+      }
+    }
+
+    // Handle incoming notifications
+    function handleNotifications(event) {
+      const value = new DataView(event.target.value.buffer);
+      const statusByte = value.getUint8(0);  // First byte is the status
+
+      if (statusByte > 0) {
+        console.log('Skylander detected');
+        skylanderDetected = true;
+      } else {
+        console.log('No Skylander detected');
+        skylanderDetected = false;
+      }
+
+      // Display status
+      document.getElementById('status').innerText = skylanderDetected ? 'Skylander detected' : 'No Skylander detected';
+    }
+
+    // Function to send color data
+    async function sendColorData(writeCharacteristic) {
+      try {
+        const interval = setInterval(async () => {
+          let r, g, b;
+          if (skylanderDetected) {
+            r = 0; g = 255; b = 0;  // Green if Skylander detected
+          } else {
+            r = 255; g = 0; b = 0;  // Red if no Skylander detected
+          }
+
+          // Create the data packet
+          const data = new Uint8Array([0x43, r, g, b]);  // 'C' is 0x43 in ASCII
+
+          // Write data to the characteristic
+          await writeCharacteristic.writeValue(data);
+          console.log(`Data sent: C, ${r}, ${g}, ${b}`);
+        }, 500);  // Send data every 500ms
+      } catch (error) {
+        console.error('Failed to send data', error);
+      }
+    }
+
+    // Event listener for the connect button
+    document.getElementById('connectBtn').addEventListener('click', connectToDevice);
+
+  </script>
 </body>
 </html>
